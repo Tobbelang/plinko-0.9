@@ -1,0 +1,1888 @@
+<head>
+  <link href="https://fonts.googleapis.com/css2?family=Inconsolata&family=PT+Sans+Narrow&family=Play&family=Playfair+Display&family=Press+Start+2P&family=Work+Sans:wght@600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Oswald&family=Roboto+Mono:wght@500&family=Teko&display=swap" rel="stylesheet">
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plinko</title>
+  <script src="../p5&matterjs/p5.js"></script>
+  <!-- <script src="../addons/p5.sound.js"></script> -->
+  <script src="../p5&matterjs/matter.js"></script>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="plinko.js"></script>
+  <script src="particle.js"></script>
+  <script src="peg.js"></script>
+  <script src="sensor.js"></script>
+  <script src="line.js"></script>
+  <style>
+body {
+  background-color: rgb(32, 31, 31);
+}
+:root {
+  --input-color: #99a3ba;
+  --input-border: #cdd9ed;
+  --input-background: #fff;
+  --input-placeholder: #cbd1dc;
+  --input-border-focus: #275efe;
+  --group-color: var(--input-color);
+  --group-border: var(--input-border);
+  --group-background: #eef4ff;
+  --group-color-focus: #fff;
+  --group-border-focus: var(--input-border-focus);
+  --group-background-focus: #678efe;
+}
+
+#betinput, #ändraPengar, #betvalue, #drops {
+  display: block;
+	text-align: center; 
+  width: auto;
+
+  line-height: 20px;
+  font-size: 17px;
+  font-family: 'Teko', sans-serif;
+  font-weight: 500;
+
+  border-radius: 6px;
+  -webkit-appearance: none;
+  color: var(--input-color);
+  border: 1px solid var(--input-border);
+  background: var(--input-background);
+  transition: border 0.3s ease;
+}
+#betinput::-moz-placeholder, #ändraPengar::-moz-placeholder, #betvalue::-moz-placeholder, #drops::-moz-placeholder  {
+  color: var(--input-placeholder);
+}
+#betinput:-ms-input-placeholder, #ändraPengar:-ms-input-placeholder, #betvalue:-ms-input-placeholder, #drops:-ms-input-placeholder{
+  color: var(--input-placeholder);
+}
+#betinput::placeholder, #ändraPengar::placeholder, #betvalue::placeholder, #drops::placeholder {
+  color: var(--input-placeholder);
+}
+#betinput:focus, #ändraPengar:focus, #betvalue:focus, #drops:focus {
+  outline: none;
+  border-color: var(--input-border-focus);
+}
+
+.form-group {
+  position: relative;
+  display: flex;
+  width: 240px;
+  
+}
+.form-group > span,
+.form-group #betinput, .form-group #ändraPengar, .form-group #betvalue, .form-group #drops {
+  white-space: nowrap;
+  display: flex;
+}
+.form-group > span:not(:first-child):not(:last-child),
+.form-group #betinput:not(:first-child):not(:last-child), .form-group #ändraPengar:not(:first-child):not(:last-child), .form-group #betvalue:not(:first-child):not(:last-child), .form-group #drops:not(:first-child):not(:last-child) {
+  border-radius: 0;
+}
+.form-group > span:first-child,
+.form-group #betinput:first-child, .form-group #ändraPengar:first-child, .form-group #betvalue:first-child, .form-group #drops:first-child {
+  border-radius: 6px 0 0 6px;
+}
+.form-group > span:last-child,
+.form-group #betinput:last-child, .form-group #ändraPengar:last-child, .form-group #betvalue:last-child, .form-group #drops:last-child {
+  border-radius: 0 6px 6px 0;
+}
+.form-group > span:not(:first-child),
+.form-group #betinput:not(:first-child), .form-group #ändraPengar:not(:first-child), .form-group #betvalue:not(:first-child), .form-group #drops:not(:first-child) {
+  margin-left: -1px;
+}
+.form-group #betinput, .form-group #ändraPengar, .form-group #betvalue, .form-group #drops {
+  position: relative;
+  z-index: 1;
+  flex: 1 1 auto;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+.form-group > span {
+  text-align: center;
+  padding: 8px 12px;
+  font-family: 'Teko', sans-serif;
+  font-size: 18px;
+  line-height: 25px;
+  color: var(--group-color);
+  background: var(--group-background);
+  border: 1px solid var(--group-border);
+  transition: background 0.3s ease, border 0.3s ease, color 0.3s ease;
+}
+.form-group:focus-within > span {
+  color: var(--group-color-focus);
+  background: var(--group-background-focus);
+  border-color: var(--group-border-focus);
+}
+#pascal14, #pascal15, #pascal16, #pascal17, #pascal18, #pascal19, #pascal20, #pascal21, #pascal22, #pascal23, #pascal24, #pascal25, #pascal26, #pascal27, #pascal28, #pascal29, #pascal30, #pascal31, #pascal32, #pascal33, #pascal34, #pascal35, #pascal36, #pascal37, #pascal38, #pascal39, #pascal40, #pascal41, #pascal42, #pascal43, #pascal44, #pascal45, #pascal46, #pascal47, #pascal48, #pascal49, #pascal50, #pascal51, #pascal52, #pascal53, #pascal54, #pascal55, #pascal56, #pascal57, #pascal58, #pascal59, #pascal60, #pascal61, #pascal62, #pascal63, #pascal64, #pascal65, #pascal66, #pascal67, #pascal68, #pascal69, #pascal70, #pascal71, #pascal72, #pascal73, #pascal74, #pascal75, #pascal76, #pascal77, #pascal78, #pascal79, #pascal80, #pascal81, #pascal82, #pascal83, #pascal84, #pascal85, #pascal86, #pascal87, #pascal88, #pascal89, #pascal90, #pascal91, #pascal92, #pascal93, #pascal94, #pascal95, #pascal96, #pascal97, #pascal98, #pascal99, #pascal100, #pascal101, #pascal102, #pascal103, #pascal104, #pascal105, #pascal106, #pascal107, #pascal108, #pascal109, #pascal110, #pascal111, #pascal112, #pascal113, #pascal114, #pascal115 {
+ 
+  margin-top: -4px;
+  margin-left: -8px;
+    width: 22.88px;
+    height: 13.2px;
+    background: rgba(211,211,211,0.5);
+    position: absolute;
+}
+#pascal14:before, #pascal15:before, #pascal16:before, #pascal17:before, #pascal18:before, #pascal19:before, #pascal20:before, #pascal21:before, #pascal22:before, #pascal23:before, #pascal24:before, #pascal25:before, #pascal26:before, #pascal27:before, #pascal28:before, #pascal29:before, #pascal30:before, #pascal31:before, #pascal32:before, #pascal33:before, #pascal34:before, #pascal35:before, #pascal36:before, #pascal37:before, #pascal38:before, #pascal39:before, #pascal40:before, #pascal41:before, #pascal42:before, #pascal43:before, #pascal44:before, #pascal45:before, #pascal46:before, #pascal47:before, #pascal48:before, #pascal49:before, #pascal50:before, #pascal51:before, #pascal52:before, #pascal53:before, #pascal54:before, #pascal55:before, #pascal56:before, #pascal57:before, #pascal58:before, #pascal59:before, #pascal60:before, #pascal61:before, #pascal62:before, #pascal63:before, #pascal64:before, #pascal65:before, #pascal66:before, #pascal67:before, #pascal68:before, #pascal69:before, #pascal70:before, #pascal71:before, #pascal72:before, #pascal73:before, #pascal74:before, #pascal75:before, #pascal76:before, #pascal77:before, #pascal78:before, #pascal79:before, #pascal80:before, #pascal81:before, #pascal82:before, #pascal83:before, #pascal84:before, #pascal85:before, #pascal86:before, #pascal87:before, #pascal88:before, #pascal89:before, #pascal90:before, #pascal91:before, #pascal92:before, #pascal93:before, #pascal94:before, #pascal95:before, #pascal96:before, #pascal97:before, #pascal98:before, #pascal99:before, #pascal100:before, #pascal101:before, #pascal102:before, #pascal103:before, #pascal104:before, #pascal105:before, #pascal106:before, #pascal107:before, #pascal108:before, #pascal109:before, #pascal110:before, #pascal111:before, #pascal112:before, #pascal113:before, #pascal114:before, #pascal115:before,
+#pascal14:after, #pascal15:after, #pascal16:after, #pascal17:after, #pascal18:after, #pascal19:after, #pascal20:after, #pascal21:after, #pascal22:after, #pascal23:after, #pascal24:after, #pascal25:after, #pascal26:after, #pascal27:after, #pascal28:after, #pascal29:after, #pascal30:after, #pascal31:after, #pascal32:after, #pascal33:after, #pascal34:after, #pascal35:after, #pascal36:after, #pascal37:after, #pascal38:after, #pascal39:after, #pascal40:after, #pascal41:after, #pascal42:after, #pascal43:after, #pascal44:after, #pascal45:after, #pascal46:after, #pascal47:after, #pascal48:after, #pascal49:after, #pascal50:after, #pascal51:after, #pascal52:after, #pascal53:after, #pascal54:after, #pascal55:after, #pascal56:after, #pascal57:after, #pascal58:after, #pascal59:after, #pascal60:after, #pascal61:after, #pascal62:after, #pascal63:after, #pascal64:after, #pascal65:after, #pascal66:after, #pascal67:after, #pascal68:after, #pascal69:after, #pascal70:after, #pascal71:after, #pascal72:after, #pascal73:after, #pascal74:after, #pascal75:after, #pascal76:after, #pascal77:after, #pascal78:after, #pascal79:after, #pascal80:after, #pascal81:after, #pascal82:after, #pascal83:after, #pascal84:after, #pascal85:after, #pascal86:after, #pascal87:after, #pascal88:after, #pascal89:after, #pascal90:after, #pascal91:after, #pascal92:after, #pascal93:after, #pascal94:after, #pascal95:after, #pascal96:after, #pascal97:after, #pascal98:after, #pascal99:after, #pascal100:after, #pascal101:after, #pascal102:after, #pascal103:after, #pascal104:after, #pascal105:after, #pascal106:after, #pascal107:after, #pascal108:after, #pascal109:after, #pascal110:after, #pascal111:after, #pascal112:after, #pascal113:after, #pascal114:after, #pascal115:after {
+  content:"";
+  border-left: 11.44px solid transparent;
+    border-right: 11.44px solid transparent;
+    top: 13.3px;
+    position: absolute;
+}
+
+
+  #pascal14:before, #pascal15:before, #pascal16:before, #pascal17:before, #pascal18:before, #pascal19:before, #pascal20:before, #pascal21:before, #pascal22:before, #pascal23:before, #pascal24:before, #pascal25:before, #pascal26:before, #pascal27:before, #pascal28:before, #pascal29:before, #pascal30:before, #pascal31:before, #pascal32:before, #pascal33:before, #pascal34:before, #pascal35:before, #pascal36:before, #pascal37:before, #pascal38:before, #pascal39:before, #pascal40:before, #pascal41:before, #pascal42:before, #pascal43:before, #pascal44:before, #pascal45:before, #pascal46:before, #pascal47:before, #pascal48:before, #pascal49:before, #pascal50:before, #pascal51:before, #pascal52:before, #pascal53:before, #pascal54:before, #pascal55:before, #pascal56:before, #pascal57:before, #pascal58:before, #pascal59:before, #pascal60:before, #pascal61:before, #pascal62:before, #pascal63:before, #pascal64:before, #pascal65:before, #pascal66:before, #pascal67:before, #pascal68:before, #pascal69:before, #pascal70:before, #pascal71:before, #pascal72:before, #pascal73:before, #pascal74:before, #pascal75:before, #pascal76:before, #pascal77:before, #pascal78:before, #pascal79:before, #pascal80:before, #pascal81:before, #pascal82:before, #pascal83:before, #pascal84:before, #pascal85:before, #pascal86:before, #pascal87:before, #pascal88:before, #pascal89:before, #pascal90:before, #pascal91:before, #pascal92:before, #pascal93:before, #pascal94:before, #pascal95:before, #pascal96:before, #pascal97:before, #pascal98:before, #pascal99:before, #pascal100:before, #pascal101:before, #pascal102:before, #pascal103:before, #pascal104:before, #pascal105:before, #pascal106:before, #pascal107:before, #pascal108:before, #pascal109:before, #pascal110:before, #pascal111:before, #pascal112:before, #pascal113:before, #pascal114:before, #pascal115:before {
+    top: -6.4px;
+    border-bottom: 6.6px solid rgba(211,211,211,0.5);
+  }
+
+  #pascal14:after, #pascal15:after, #pascal16:after, #pascal17:after, #pascal18:after, #pascal19:after, #pascal20:after, #pascal21:after, #pascal22:after, #pascal23:after, #pascal24:after, #pascal25:after, #pascal26:after, #pascal27:after, #pascal28:after, #pascal29:after, #pascal30:after, #pascal31:after, #pascal32:after, #pascal33:after, #pascal34:after, #pascal35:after, #pascal36:after, #pascal37:after, #pascal38:after, #pascal39:after, #pascal40:after, #pascal41:after, #pascal42:after, #pascal43:after, #pascal44:after, #pascal45:after, #pascal46:after, #pascal47:after, #pascal48:after, #pascal49:after, #pascal50:after, #pascal51:after, #pascal52:after, #pascal53:after, #pascal54:after, #pascal55:after, #pascal56:after, #pascal57:after, #pascal58:after, #pascal59:after, #pascal60:after, #pascal61:after, #pascal62:after, #pascal63:after, #pascal64:after, #pascal65:after, #pascal66:after, #pascal67:after, #pascal68:after, #pascal69:after, #pascal70:after, #pascal71:after, #pascal72:after, #pascal73:after, #pascal74:after, #pascal75:after, #pascal76:after, #pascal77:after, #pascal78:after, #pascal79:after, #pascal80:after, #pascal81:after, #pascal82:after, #pascal83:after, #pascal84:after, #pascal85:after, #pascal86:after, #pascal87:after, #pascal88:after, #pascal89:after, #pascal90:after, #pascal91:after, #pascal92:after, #pascal93:after, #pascal94:after, #pascal95:after, #pascal96:after, #pascal97:after, #pascal98:after, #pascal99:after, #pascal100:after, #pascal101:after, #pascal102:after, #pascal103:after, #pascal104:after, #pascal105:after, #pascal106:after, #pascal107:after, #pascal108:after, #pascal109:after, #pascal110:after, #pascal111:after, #pascal112:after, #pascal113:after, #pascal114:after, #pascal115:after {
+    bottom: -6.8px;
+    border-top: 6.6px solid rgba(211,211,211,0.5);
+  }
+  #pascalValue14, #pascalValue15, #pascalValue16, #pascalValue17, #pascalValue18, #pascalValue19, #pascalValue20, #pascalValue21, #pascalValue22, #pascalValue23, #pascalValue24, #pascalValue25, #pascalValue26, #pascalValue27, #pascalValue28, #pascalValue29, #pascalValue30, #pascalValue31, #pascalValue32, #pascalValue33, #pascalValue34, #pascalValue35, #pascalValue36, #pascalValue37, #pascalValue38, #pascalValue39, #pascalValue40, #pascalValue41, #pascalValue42, #pascalValue43, #pascalValue44, #pascalValue45, #pascalValue46, #pascalValue47, #pascalValue48, #pascalValue49, #pascalValue50, #pascalValue51, #pascalValue52, #pascalValue53, #pascalValue54, #pascalValue55, #pascalValue56, #pascalValue57, #pascalValue58, #pascalValue59, #pascalValue60, #pascalValue61, #pascalValue62, #pascalValue63, #pascalValue64, #pascalValue65, #pascalValue66, #pascalValue67, #pascalValue68, #pascalValue69, #pascalValue70, #pascalValue71, #pascalValue72, #pascalValue73, #pascalValue74, #pascalValue75, #pascalValue76, #pascalValue77, #pascalValue78, #pascalValue79, #pascalValue80, #pascalValue81, #pascalValue82, #pascalValue83, #pascalValue84, #pascalValue85, #pascalValue86, #pascalValue87, #pascalValue88, #pascalValue89, #pascalValue90, #pascalValue91, #pascalValue92, #pascalValue93, #pascalValue94, #pascalValue95, #pascalValue96, #pascalValue97, #pascalValue98, #pascalValue99, #pascalValue100, #pascalValue101, #pascalValue102, #pascalValue103, #pascalValue104, #pascalValue105, #pascalValue106, #pascalValue107, #pascalValue108, #pascalValue109, #pascalValue110, #pascalValue111, #pascalValue112, #pascalValue113, #pascalValue114, #pascalValue115 {
+    margin-top: -7.9px;
+    margin-left: -6.5px;
+ width: 20px;
+ height: 20px;
+ position: absolute;
+ background-color: transparent;
+ z-index: 999999999999;
+ text-align: center;
+ font-family: 'Oswald', sans-serif;
+ font-size: 12px;
+ color: red;
+}
+#boll14, #boll15, #boll16, #boll17, #boll18, #boll19, #boll20, #boll21, #boll22, #boll23, #boll24, #boll25, #boll26, #boll27, #boll28, #boll29, #boll30, #boll31, #boll32, #boll33, #boll34, #boll35, #boll36, #boll37, #boll38, #boll39, #boll40, #boll41, #boll42, #boll43, #boll44, #boll45, #boll46, #boll47, #boll48, #boll49, #boll50, #boll51, #boll52, #boll53, #boll54, #boll55, #boll56, #boll57, #boll58, #boll59, #boll60, #boll61, #boll62, #boll63, #boll64, #boll65, #boll66, #boll67, #boll68, #boll69, #boll70, #boll71, #boll72, #boll73, #boll74, #boll75, #boll76, #boll77, #boll78, #boll79, #boll80, #boll81, #boll82, #boll83, #boll84, #boll85, #boll86, #boll87, #boll88, #boll89, #boll90, #boll91, #boll92, #boll93, #boll94, #boll95, #boll96, #boll97, #boll98, #boll99, #boll100, #boll101, #boll102, #boll103, #boll104, #boll105, #boll106, #boll107, #boll108, #boll109, #boll110, #boll111, #boll112, #boll113, #boll114, #boll115 {
+  box-sizing: border-box;  
+  position: absolute;
+    width: 5.6px;
+		height: 6px;
+		border-radius: 50%;
+		transform-origin: center;
+    z-index: 99999999;
+	}
+
+  #boll14:hover, #boll15:hover, #boll16:hover, #boll17:hover, #boll18:hover, #boll19:hover, #boll20:hover, #boll21:hover, #boll22:hover, #boll23:hover, #boll24:hover, #boll25:hover, #boll26:hover, #boll27:hover, #boll28:hover, #boll29:hover, #boll30:hover, #boll31:hover, #boll32:hover, #boll33:hover, #boll34:hover, #boll35:hover, #boll36:hover, #boll37:hover, #boll38:hover, #boll39:hover, #boll40:hover, #boll41:hover, #boll42:hover, #boll43:hover, #boll44:hover, #boll45:hover, #boll46:hover, #boll47:hover, #boll48:hover, #boll49:hover, #boll50:hover, #boll51:hover, #boll52:hover, #boll53:hover, #boll54:hover, #boll55:hover, #boll56:hover, #boll57:hover, #boll58:hover, #boll59:hover, #boll60:hover, #boll61:hover, #boll62:hover, #boll63:hover, #boll64:hover, #boll65:hover, #boll66:hover, #boll67:hover, #boll68:hover, #boll69:hover, #boll70:hover, #boll71:hover, #boll72:hover, #boll73:hover, #boll74:hover, #boll75:hover, #boll76:hover, #boll77:hover, #boll78:hover, #boll79:hover, #boll80:hover, #boll81:hover, #boll82:hover, #boll83:hover, #boll84:hover, #boll85:hover, #boll86:hover, #boll87:hover, #boll88:hover, #boll89:hover, #boll90:hover, #boll91:hover, #boll92:hover, #boll93:hover, #boll94:hover, #boll95:hover, #boll96:hover, #boll97:hover, #boll98:hover, #boll99:hover, #boll100:hover, #boll101:hover, #boll102:hover, #boll103:hover, #boll104:hover, #boll105:hover, #boll106:hover, #boll107:hover, #boll108:hover, #boll109:hover, #boll110:hover, #boll111:hover, #boll112:hover, #boll113:hover, #boll114:hover, #boll115:hover {
+    position: absolute;
+    border: 0.000001px solid gold;
+    cursor: pointer
+  }
+  #boll14:hover:before, #boll15:hover:before, #boll16:hover:before, #boll17:hover:before, #boll18:hover:before, #boll19:hover:before, #boll20:hover:before, #boll21:hover:before, #boll22:hover:before, #boll23:hover:before, #boll24:hover:before, #boll25:hover:before, #boll26:hover:before, #boll27:hover:before, #boll28:hover:before, #boll29:hover:before, #boll30:hover:before, #boll31:hover:before, #boll32:hover:before, #boll33:hover:before, #boll34:hover:before, #boll35:hover:before, #boll36:hover:before, #boll37:hover:before, #boll38:hover:before, #boll39:hover:before, #boll40:hover:before, #boll41:hover:before, #boll42:hover:before, #boll43:hover:before, #boll44:hover:before, #boll45:hover:before, #boll46:hover:before, #boll47:hover:before, #boll48:hover:before, #boll49:hover:before, #boll50:hover:before, #boll51:hover:before, #boll52:hover:before, #boll53:hover:before, #boll54:hover:before, #boll55:hover:before, #boll56:hover:before, #boll57:hover:before, #boll58:hover:before, #boll59:hover:before, #boll60:hover:before, #boll61:hover:before, #boll62:hover:before, #boll63:hover:before, #boll64:hover:before, #boll65:hover:before, #boll66:hover:before, #boll67:hover:before, #boll68:hover:before, #boll69:hover:before, #boll70:hover:before, #boll71:hover:before, #boll72:hover:before, #boll73:hover:before, #boll74:hover:before, #boll75:hover:before, #boll76:hover:before, #boll77:hover:before, #boll78:hover:before, #boll79:hover:before, #boll80:hover:before, #boll81:hover:before, #boll82:hover:before, #boll83:hover:before, #boll84:hover:before, #boll85:hover:before, #boll86:hover:before, #boll87:hover:before, #boll88:hover:before, #boll89:hover:before, #boll90:hover:before, #boll91:hover:before, #boll92:hover:before, #boll93:hover:before, #boll94:hover:before, #boll95:hover:before, #boll96:hover:before, #boll97:hover:before, #boll98:hover:before, #boll99:hover:before, #boll100:hover:before, #boll101:hover:before, #boll102:hover:before, #boll103:hover:before, #boll104:hover:before, #boll105:hover:before, #boll106:hover:before, #boll107:hover:before, #boll108:hover:before, #boll109:hover:before, #boll110:hover:before, #boll111:hover:before, #boll112:hover:before, #boll113:hover:before, #boll114:hover:before, #boll115:hover:before {
+    content: 'Hits:' attr(data-content);
+    text-align: left;
+    font-size: 7.7px;
+    top: -18px;
+    left: 0px;
+    transform:translate(calc(-50% + 2.4px));
+    width: 50px;
+    height:10px;
+    position: absolute;
+    background-color: rgba(217, 255, 128, 0.3);
+    border: 0.3px solid white;
+    cursor: pointer
+  }
+  #boll14:hover:after, #boll15:hover:after, #boll16:hover:after, #boll17:hover:after, #boll18:hover:after, #boll19:hover:after, #boll20:hover:after, #boll21:hover:after, #boll22:hover:after, #boll23:hover:after, #boll24:hover:after, #boll25:hover:after, #boll26:hover:after, #boll27:hover:after, #boll28:hover:after, #boll29:hover:after, #boll30:hover:after, #boll31:hover:after, #boll32:hover:after, #boll33:hover:after, #boll34:hover:after, #boll35:hover:after, #boll36:hover:after, #boll37:hover:after, #boll38:hover:after, #boll39:hover:after, #boll40:hover:after, #boll41:hover:after, #boll42:hover:after, #boll43:hover:after, #boll44:hover:after, #boll45:hover:after, #boll46:hover:after, #boll47:hover:after, #boll48:hover:after, #boll49:hover:after, #boll50:hover:after, #boll51:hover:after, #boll52:hover:after, #boll53:hover:after, #boll54:hover:after, #boll55:hover:after, #boll56:hover:after, #boll57:hover:after, #boll58:hover:after, #boll59:hover:after, #boll60:hover:after, #boll61:hover:after, #boll62:hover:after, #boll63:hover:after, #boll64:hover:after, #boll65:hover:after, #boll66:hover:after, #boll67:hover:after, #boll68:hover:after, #boll69:hover:after, #boll70:hover:after, #boll71:hover:after, #boll72:hover:after, #boll73:hover:after, #boll74:hover:after, #boll75:hover:after, #boll76:hover:after, #boll77:hover:after, #boll78:hover:after, #boll79:hover:after, #boll80:hover:after, #boll81:hover:after, #boll82:hover:after, #boll83:hover:after, #boll84:hover:after, #boll85:hover:after, #boll86:hover:after, #boll87:hover:after, #boll88:hover:after, #boll89:hover:after, #boll90:hover:after, #boll91:hover:after, #boll92:hover:after, #boll93:hover:after, #boll94:hover:after, #boll95:hover:after, #boll96:hover:after, #boll97:hover:after, #boll98:hover:after, #boll99:hover:after, #boll100:hover:after, #boll101:hover:after, #boll102:hover:after, #boll103:hover:after, #boll104:hover:after, #boll105:hover:after, #boll106:hover:after, #boll107:hover:after, #boll108:hover:after, #boll109:hover:after, #boll110:hover:after, #boll111:hover:after, #boll112:hover:after, #boll113:hover:after, #boll114:hover:after, #boll115:hover:after {
+    content: '';
+    position: absolute;
+    top: -7px;
+    left: 0px;
+    transform:translate(calc(-50% + 2.4px));
+    width: 0;
+    height: 0;
+    border: 7.5px solid transparent;
+    border-bottom: 0;
+    border-top: 6.4px solid white;
+    border-radius: 1px;
+    cursor: pointer
+  }
+  #bollAnimation14, #bollAnimation15, #bollAnimation16, #bollAnimation17, #bollAnimation18, #bollAnimation19, #bollAnimation20, #bollAnimation21, #bollAnimation22, #bollAnimation23, #bollAnimation24, #bollAnimation25, #bollAnimation26, #bollAnimation27, #bollAnimation28, #bollAnimation29, #bollAnimation30, #bollAnimation31, #bollAnimation32, #bollAnimation33, #bollAnimation34, #bollAnimation35, #bollAnimation36, #bollAnimation37, #bollAnimation38, #bollAnimation39, #bollAnimation40, #bollAnimation41, #bollAnimation42, #bollAnimation43, #bollAnimation44, #bollAnimation45, #bollAnimation46, #bollAnimation47, #bollAnimation48, #bollAnimation49, #bollAnimation50, #bollAnimation51, #bollAnimation52, #bollAnimation53, #bollAnimation54, #bollAnimation55, #bollAnimation56, #bollAnimation57, #bollAnimation58, #bollAnimation59, #bollAnimation60, #bollAnimation61, #bollAnimation62, #bollAnimation63, #bollAnimation64, #bollAnimation65, #bollAnimation66, #bollAnimation67, #bollAnimation68, #bollAnimation69, #bollAnimation70, #bollAnimation71, #bollAnimation72, #bollAnimation73, #bollAnimation74, #bollAnimation75, #bollAnimation76, #bollAnimation77, #bollAnimation78, #bollAnimation79, #bollAnimation80, #bollAnimation81, #bollAnimation82, #bollAnimation83, #bollAnimation84, #bollAnimation85, #bollAnimation86, #bollAnimation87, #bollAnimation88, #bollAnimation89, #bollAnimation90, #bollAnimation91, #bollAnimation92, #bollAnimation93, #bollAnimation94, #bollAnimation95, #bollAnimation96, #bollAnimation97, #bollAnimation98, #bollAnimation99, #bollAnimation100, #bollAnimation101, #bollAnimation102, #bollAnimation103, #bollAnimation104, #bollAnimation105, #bollAnimation106, #bollAnimation107, #bollAnimation108, #bollAnimation109, #bollAnimation110, #bollAnimation111, #bollAnimation112, #bollAnimation113, #bollAnimation114, #bollAnimation115 {
+    display: none;
+    box-sizing: border-box;  
+  position: absolute;
+    width: 5.6px;
+		height: 5.6px;
+		border-radius: 50%;
+		transform-origin: center;
+    z-index: 1;
+    animation: active-background 0.15s linear 1;
+  }
+  @keyframes active-background {
+		0% {
+      outline: 0px solid rgba(255,215,255,0.9)
+      
+		}
+		100% {
+      outline: 4px solid  rgba(255,255,255,0.3)
+		}
+	}
+    .startBet {
+      position: absolute;
+      background-color: black;
+      border: transparent;
+      color: white;
+      font-size: 12px;
+      margin: 0;
+      padding: 3;
+      top: 68%;
+      left: 50%;
+      transform:translate(-50%);
+    }
+    .startBet:hover {
+      cursor: pointer;
+    }
+    .startBet:active {
+      background-color: green;
+    }
+    
+    .infoholder {
+      position: absolute;
+      background-color: rgb(221, 217, 217);
+      border: 2px solid rgb(51, 99, 105);
+      top: 530px;
+      border-radius: 7px;
+      width: 300px;
+      height: 100px;
+      left: 50px;
+      overflow:hidden;
+      left: 50%;
+      transform:translate(-50%)
+    }
+
+    #value {
+      color: black;
+      font-size: 15px;
+      position: absolute;
+      left: 100px;
+    }
+    p {
+      font-family: 'Playfair Display', serif;
+      position: absolute;
+      font-size: 13.5px;
+      left: 17px;
+    }
+    #normalfordelningcanvas {
+      position: absolute;
+      height: 300px;
+      width: 450px;
+      margin: 0;
+      left: 50px;
+      top: 10px;
+      box-sizing:border-box;
+      background-color: rgb(71, 119, 125);
+      border-left: 3px solid rgb(51, 99, 105);
+      border-top: 3px solid rgb(51, 99, 105);
+      border-right: 3px solid rgb(51, 99, 105);
+    } 
+    #filled {
+      margin: 0;
+      left: -3px;
+      top: 100%;
+      position: absolute;
+      height: 47px;
+      width: 450px; 
+      z-index: -1;
+      background-color: rgb(51, 99, 105);
+    }
+    #id1 {
+      display: flex;
+      text-align: center;
+      justify-content: center;
+      position: absolute;
+      width: 7.6923076923076923076923076923077%;
+      height: 0px;
+      top: 100%;
+      transform:translate(0,-100%);
+      background-color: white;
+    }
+    #id1::after {
+      content: '33x';
+      position: absolute;
+      display: inline;
+      font-size: 13px;
+      color:white;
+      font-family: 'Work Sans', sans-serif;
+      white-space: pre;
+      bottom: -40px;
+      width: 90%;
+      padding-top: 2px;
+      height: 18px;
+      border-radius: 3px;
+      background-color: #FF0D0D;
+    }
+    #id2::after {
+      content: '11x';
+      position: absolute;
+      display: inline;
+      font-size: 13px;
+      color:white;
+      font-family: 'Work Sans', sans-serif;
+      white-space: pre;
+      bottom: -40px;
+      width: 90%;
+      padding-top: 2px;
+      height: 18px;
+      border-radius: 3px;
+      background-color: #FF4E11
+    }
+    #id3::after {
+      content: '4x';
+      position: absolute;
+      display: inline;
+      font-size: 13px;
+      color:white;
+      font-family: 'Work Sans', sans-serif;
+      white-space: pre;
+      bottom: -40px;
+      width: 90%;
+      padding-top: 2px;
+      height: 18px;
+      border-radius: 3px;
+      background-color: #FF8E15
+    }
+    #id4::after {
+      content: '2x';
+      position: absolute;
+      display: inline;
+      font-size: 13px;
+      color:white;
+      font-family: 'Work Sans', sans-serif;
+      white-space: pre;
+      bottom: -40px;
+      width: 90%;
+      padding-top: 2px;
+      height: 18px;
+      border-radius: 3px;
+      background-color: #FAB733
+    }
+    #id5::after {
+      content: '1.1x';
+      position: absolute;
+      display: inline;
+      font-size: 13px;
+      color:white;
+      font-family: 'Work Sans', sans-serif;
+      white-space: pre;
+      bottom: -40px;
+      width: 90%;
+      padding-top: 2px;
+      height: 18px;
+      border-radius: 3px;
+      background-color: #ACB334
+    }
+    #id6::after {
+      content: '0.6x';
+      position: absolute;
+      display: inline;
+      font-size: 13px;
+      color:white;
+      font-family: 'Work Sans', sans-serif;
+      white-space: pre;
+      bottom: -40px;
+      width: 90%;
+      padding-top: 2px;
+      height: 18px;
+      border-radius: 3px;
+      background-color: #69B34C
+    }
+    #id7::after {
+      content: '0.3x';
+      position: absolute;
+      display: inline;
+      font-size: 13px;
+      color:white;
+      font-family: 'Work Sans', sans-serif;
+      white-space: pre;
+      bottom: -40px;
+      width: 90%;
+      padding-top: 2px;
+      height: 18px;
+      border-radius: 3px;
+      background-color: #34D400
+    }
+    #id8::after {
+      content: '0.6x';
+      position: absolute;
+      display: inline;
+      font-size: 13px;
+      color:white;
+      font-family: 'Work Sans', sans-serif;
+      white-space: pre;
+      bottom: -40px;
+      width: 90%;
+      padding-top: 2px;
+      height: 18px;
+      border-radius: 3px;
+      background-color: #69B34C
+    }
+    #id9::after {
+      content: '1.1x';
+      position: absolute;
+      display: inline;
+      font-size: 13px;
+      color:white;
+      font-family: 'Work Sans', sans-serif;
+      white-space: pre;
+      bottom: -40px;
+      width: 90%;
+      padding-top: 2px;
+      height: 18px;
+      border-radius: 3px;
+      background-color: #ACB334
+    }
+    #id10::after {
+      content: '2x';
+      position: absolute;
+      display: inline;
+      font-size: 13px;
+      color:white;
+      font-family: 'Work Sans', sans-serif;
+      white-space: pre;
+      bottom: -40px;
+      width: 90%;
+      padding-top: 2px;
+      height: 18px;
+      border-radius: 3px;
+      background-color: #FAB733
+    }
+    #id11::after {
+      content: '4x';
+      position: absolute;
+      display: inline;
+      font-size: 13px;
+      color:white;
+      font-family: 'Work Sans', sans-serif;
+      white-space: pre;
+      bottom: -40px;
+      width: 90%;
+      padding-top: 2px;
+      height: 18px;
+      border-radius: 3px;
+      background-color: #FF8E15
+    }
+    #id12::after {
+      content: '11x';
+      position: absolute;
+      display: inline;
+      font-size: 13px;
+      color:white;
+      font-family: 'Work Sans', sans-serif;
+      white-space: pre;
+      bottom: -40px;
+      width: 90%;
+      padding-top: 2px;
+      height: 18px;
+      border-radius: 3px;
+      background-color: #FF4E11
+    }
+    #id13::after {
+      content: '33x';
+      position: absolute;
+      display: inline;
+      font-size: 13px;
+      color:white;
+      font-family: 'Work Sans', sans-serif;
+      white-space: pre;
+      bottom: -40px;
+      width: 90%;
+      padding-top: 2px;
+      height: 18px;
+      border-radius: 3px;
+      background-color: #FF0D0D
+    }
+    #id1text, #id2text, #id3text, #id4text, #id5text, #id6text, #id7text, #id8text, #id9text, #id10text, #id11text, #id12text, #id13text {
+      display: none;
+      position: absolute;
+      text-align: center;
+      bottom:-32px;
+      background-color:rgb(211,211,211);
+      border-radius: 3px;
+      padding: 2px;
+      transform:translate(0%,-100%);
+      font-size: 10px;
+      font-family: 'Work Sans', sans-serif;
+      color: white;
+      z-index: 10000;
+    }
+    #id2 {
+      display: flex;
+      text-align: center;
+      justify-content: center;
+      position: absolute;
+      width: 7.6923076923076923076923076923077%;
+      height: 0px;
+      top: 100%;
+      left: 7.6923076923076923076923076923077%;
+      transform:translate(0,-100%);
+      background-color: rgb(211,211,211);
+    }
+    #id3 {
+      display: flex;
+      text-align: center;
+      justify-content: center;
+      position: absolute;
+      width: 7.6923076923076923076923076923077%;
+      height: 0px;
+      top: 100%;
+      left: 15.384615384615384615384615384615%;
+      transform:translate(0,-100%);
+      background-color: rgb(211,211,211);
+    }
+    #id4 {
+      display: flex;
+      text-align: center;
+      justify-content: center;
+      position: absolute;
+      width: 7.6923076923076923076923076923077%;
+      height: 0px;
+      top: 100%;
+      left: 23.076923076923076923076923076923%;
+      transform:translate(0,-100%);
+      background-color: rgb(211,211,211);
+    }
+    #id5 {
+      display: flex;
+      text-align: center;
+      justify-content: center;
+      position: absolute;
+      width: 7.6923076923076923076923076923077%;
+      height: 0px;
+      top: 100%;
+      left: 30.769230769230769230769230769231%;
+      transform:translate(0,-100%);
+      background-color: rgb(211,211,211);
+    }
+    #id6 {
+      display: flex;
+      text-align: center;
+      justify-content: center;
+      position: absolute;
+      width: 7.6923076923076923076923076923077%;
+      height: 0px;
+      top: 100%;
+      left: 38.461538461538461538461538461538%;
+      transform:translate(0,-100%);
+      background-color: rgb(211,211,211);
+    }
+    #id7 {
+      display: flex;
+      text-align: center;
+      justify-content: center;
+      position: absolute;
+      width: 7.6923076923076923076923076923077%;
+      height: 0px;
+      top: 100%;
+      left: 46.153846153846153846153846153846%;
+      transform:translate(0,-100%);
+      background-color: rgb(211,211,211);
+    }
+    #id8 {
+      display: flex;
+      text-align: center;
+      justify-content: center;
+      position: absolute;
+      width: 7.6923076923076923076923076923077%;
+      height: 0px;
+      top: 100%;
+      left: 53.846153846153846153846153846154%;
+      transform:translate(0,-100%);
+      background-color: rgb(211,211,211);
+    }
+    #id9 {
+      display: flex;
+      text-align: center;
+      justify-content: center;
+      position: absolute;
+      width: 7.6923076923076923076923076923077%;
+      height: 0px;
+      top: 100%;
+      left: 61.538461538461538461538461538462%;
+      transform:translate(0,-100%);
+      background-color: rgb(211,211,211);
+    }
+    #id10 {
+      display: flex;
+      text-align: center;
+      justify-content: center;
+      position: absolute;
+      width: 7.6923076923076923076923076923077%;
+      height: 0px;
+      top: 100%;
+      left: 69.230769230769230769230769230769%;
+      transform:translate(0,-100%);
+      background-color: rgb(211,211,211);
+    }
+    #id11 {
+      display: flex;
+      text-align: center;
+      justify-content: center;
+      position: absolute;
+      width: 7.6923076923076923076923076923077%;
+      height: 0px;
+      top: 100%;
+      left: 76.923076923076923076923076923077%;
+      transform:translate(0,-100%);
+      background-color: rgb(211,211,211);
+    }
+    #id12 {
+      display: flex;
+      text-align: center;
+      justify-content: center;
+      position: absolute;
+      width: 7.6923076923076923076923076923077%;
+      height: 0px;
+      top: 100%;
+      left: 84.615384615384615384615384615385%;
+      transform:translate(0,-100%);
+      background-color: rgb(211,211,211);
+    }
+    #id13 {
+      display: flex;
+      text-align: center;
+      justify-content: center;
+      position: absolute;
+      width: 7.6923076923076923076923076923077%;
+      height: 0px;
+      top: 100%;
+      left: 92.307692307692307692307692307692%;
+      transform:translate(0,-100%);
+      background-color: rgb(211,211,211);
+    }
+    #pengar {
+      position: absolute;
+      font-size: 15px;
+      color: black;
+      margin:0;
+      background-color: rgb(221, 217, 217);
+      padding: 6px;
+      border-radius: 10px;
+      top: 50%;
+      left: 50%;
+      transform:translate(-50%,-50%);
+      font-family: 'Press Start 2P', cursive;
+    }
+    .settingsbox {
+		position: relative;
+		height: 38px;
+		width: 38px;
+		border-radius: 50%;
+    top: 5px;
+    left: 2.5px;
+    z-index: 9999999;
+    }
+	.kugghjuloutline {
+		position:absolute;
+		height: 16px;
+		width: 16px;
+		background-color: transparent;
+		border: 3.2px solid rgb(169,169,169);
+		border-radius: 50%;
+		z-index: 100000;
+		left: 50%;
+    top: 45%;
+    transform:translate(-50%,-50%);
+	}
+  #playpause {
+    position: absolute;
+  width: 0; 
+  height: 0; 
+  border-top: 7.5px solid transparent;
+  border-bottom: 7.5px solid transparent;
+  border-left: 10px solid green;
+  border-radius:0.5px;
+  left: 270px;
+  top: 50%;
+  transform: translate(0,-50%);
+}
+
+#playpause:hover {
+  cursor: pointer;
+}
+#pascalicon {
+position: absolute;
+left: 46px;
+top: 10px;
+width: 31px;
+height: 28px;
+border-radius: 50%;
+}
+#pascalicon:hover {
+  cursor:pointer;
+}
+#pascalpiece {
+  position: absolute;
+  height: 4px;
+  width: 12px;
+ top: 5px;
+ left: 9px;
+  background-color: rgba(211,211,211,0.5);
+}
+#pascalpiece::before {
+  content: "";
+  position: absolute;
+  width: 0; 
+  height: 0; 
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 5px solid rgba(211,211,211,0.5);
+  top: -5px;
+}
+#pascalpiece::after {
+  content: "";
+  position: absolute;
+  width: 0; 
+  height: 0; 
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 5px solid rgba(211,211,211,0.5);
+top: 4px;
+left:0px;
+}
+#pascalpiece2 {
+  position: absolute;
+  height: 4px;
+  width: 12px;
+  top: 15px;
+  left: 1px;
+  background-color: rgba(211,211,211,0.5);
+}
+#pascalpiece2::before {
+  content: "";
+  position: absolute;
+  width: 0; 
+  height: 0; 
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 5px solid rgba(211,211,211,0.5);
+  top: -5px;
+}
+#pascalpiece2::after {
+  content: "";
+  position: absolute;
+  width: 0; 
+  height: 0; 
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 5px solid rgba(211,211,211,0.5);
+top: 4px;
+left:0px;
+}
+#pascalpiece3 {
+  position: absolute;
+  height: 4px;
+  width: 12px;
+ top: 15px;
+  left: 17px;
+  background-color: rgba(211,211,211,0.5);
+}
+#pascalpiece3::before {
+  content: "";
+  position: absolute;
+  width: 0; 
+  height: 0; 
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 5px solid rgba(211,211,211,0.5);
+  top: -5px;
+}
+#pascalpiece3::after {
+  content: "";
+  position: absolute;
+  width: 0; 
+  height: 0; 
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 5px solid rgba(211,211,211,0.5);
+top: 4px;
+left:0px;
+}
+	.kugghjul {
+		position:absolute;
+		background-color: transparent;
+		border-radius: 50%;
+		top: 3.1%;
+		left: 58%;
+	}
+	.kugghjul .kugg1, .kugg2, .kugg3, .kugg4, .kugg5, .kugg6, .kugg7, .kugg8, .kugg9, .kugg10, .kugg11, .kugg12 {
+		position: absolute;
+		width: 8px;
+		height: 8px;
+		background-color: rgb(192,192,192);
+		border-radius: 8px 8px 0px 0px;
+		top: 19%;
+		left: 93%;
+		transform:rotate(30deg);
+		
+	}
+	.settingsbox:hover{
+		  		animation: transformera 15s linear infinite;
+		cursor: pointer;
+	}
+    @keyframes transformera {
+        0% {
+				transform:rotate(0deg);
+	
+        }
+        100% {
+            transform:rotate(360deg);
+			
+        }
+    }
+    
+    #settings {
+      display: none;
+      width: 400px;
+      height: 400px;
+      background-color: rgb(71, 119, 125);
+      position: absolute;
+      margin: 0;
+      animation: fadein linear 0.3s;
+      z-index: 999999999999999;
+      left: 50%;
+      transform:translate(-50%)
+
+    }
+  @keyframes fadein {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  input {
+    background-color: transparent;
+
+  }
+    button {
+      background-color: transparent;
+      border: transparent;
+    }
+    h3 {
+      position: absolute;
+      left: 50%;
+      transform:translate(-50%);
+    }
+ 
+ 
+    #antalgngr {
+      position: absolute;
+      left: 10%;
+      top: 8%;
+    }
+
+ 
+
+    #dropsText {
+      position: absolute;
+      left: 24%;
+      top: 27%;
+    }
+    #drops {
+      position: absolute;
+      width: 75px;
+      left: 104%;
+    }
+    #ändrabps {
+      position: absolute;
+      top: 9.9px;
+      left: -19px;
+      width: 170px;
+      height: 40px;
+      border-radius: 10px;
+      background-color: rgb(10, 170, 175);
+    }
+    #ändrabpsPointer {
+      display: none;
+      position: absolute;
+    width: 0; 
+    height: 0; 
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid black;
+      top: 619px;
+      left: 202px;
+      transform:translate(-50%);
+    }
+    #ändrabpsText {
+      margin: 0;
+      position: absolute;
+      font-size: 9.5px;
+      left: 5px;
+      color: white;
+      text-align: left;
+      font-family: 'Inconsolata', monospace;
+    }
+    #ändrabpsTextResponsiv {
+      margin: 0;
+      position: absolute;
+      font-size: 10px;
+      left: 61px;
+      top: 14.5px;
+      color: white;
+      text-align: left;
+      font-family: 'Inconsolata', monospace;
+    }
+    #ändrabpsTextResponsiv:hover {
+      color: red;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+    .x {
+      position: absolute;
+      width: 2.5px;
+      height: 10px;
+      background-color: red;
+      left: 97%;
+      top: -8%;
+    }
+    .x:hover {
+      cursor: pointer;
+    }
+
+    #saved {
+      position: absolute;
+      background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 7.5px 16px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 12px;
+left:50%;
+transform:translate(-50%);
+top:85%;
+    }
+  #saved:hover {
+    cursor: pointer;
+  }
+  #saved:active {
+    background-color: rgb(41, 228, 41);
+  }
+  #inställningsfel {
+    position: absolute;
+    color: rgb(214, 34, 34);
+    font-size: 18px;  
+
+    text-align: center;
+    top:75%;
+    /*font-family: 'Roboto Mono', monospace;*/
+    font-family: 'Oswald', sans-serif;
+  }
+  
+  #overlay {
+    position: absolute;
+    border: 3px solid rgb(51, 99, 105);
+    margin: 0;
+    height: 491px;
+    border-radius: 16px 16px 0px 0px;
+    width: 397px;
+    left: 50%;
+    transform:translate(-50%);
+    z-index: 10;
+  }
+  #overlaytop {
+    box-sizing: border-box;
+    margin: 0;
+    position: relative;
+    background-color: rgb(51, 99, 105);
+    height: 45px;
+    width: 400px;
+    border-radius: 10px 10px 0px 0px;
+    left: 50%;
+    transform:translate(-50%);
+    z-index: 11;
+  }
+  #tot {
+    position: absolute;
+      left: 50%;
+      
+      transform:translate(-50%);
+      top: calc(100% + 25px);
+      height: 10px;
+      padding-top: 8px;
+      font-size:14px;
+      height: 19px;
+      width: 110px;
+      background-color: rgb(51, 99, 105);
+      color: black;
+      font-family: 'Press Start 2P', cursive;
+      text-align: center;
+      z-index: 10;
+      border-radius: 2px;
+  }
+    #bet, #bet2, #bet3, #bet4{
+      position: absolute;
+      left: 50%;
+      transform:translate(-50%);
+      font-size: 11px;
+      height: 100px;
+      width: 100px;
+      background-color: rgb(51, 99, 105);
+      color: black;
+      font-family: 'Press Start 2P', cursive;
+      text-align: center;
+      z-index: 10;
+      border-radius: 2px;
+    }
+    #holder, #holder2 {
+      position: absolute;
+      left: 100%;
+      transform:translate(-100%);
+      height: 100px;
+      width: 100px;
+    }
+    #holderboxsettings {
+      position: absolute;
+      top: 70px;
+      width: 400px;
+      height: 220px;
+      display: grid;
+      align-items: center;
+      justify-content: center;
+    
+      
+    }
+    #betsholder {
+      position: absolute;
+      height: 50px;
+      border: 1px solid black;
+      width: 100px;
+      right: 50px;
+
+    }
+    
+    #bet {
+      top: calc(100% + 70px);
+      height: 10px;
+      padding: 4px;
+   
+    }
+    #bet2 {
+      top: calc(100% + 90px);
+      color: green;
+      height: 10px;
+      padding: 4px;
+    }
+    #bet3 {
+      top: calc(100% + 110px);
+      color: red;
+      height: 10px;
+      padding: 4px;
+    }
+  #bets {
+    position: absolute;
+    left: 50%;
+    transform:translate(-50%);
+    z-index: 10000;
+  }
+   #bethistory {
+    position: absolute;
+    height: 150px;
+    width: 145px;
+    background-color: rgb(221, 217, 217);
+    border-radius: 0px 0px 15px 15px;
+    transform:translate(-50%);
+   }
+   #smoothingleft {
+    position: absolute;
+    display: inline-block;
+    border-left: 139px solid rgb(221, 217, 217);
+  border-top: 50px solid transparent;
+  transform:rotate(180deg);
+    top: 100%;
+   }
+   #smoothingright {
+    position: absolute;
+    display: inline-block;
+    border-right: 140px solid rgb(221, 217, 217);
+  border-top: 50px solid transparent;
+    transform:rotate(180deg);
+    top: 100%;
+   }
+   #holderbets {
+    position: absolute;
+      margin: 0;
+      right: 275px;
+      top: 310px;
+   }
+   #datawin {
+    position: absolute;
+      font-size: 15px;
+      color: black;
+      margin:0;
+      padding: 6px;
+      top: 10%;
+      transform:translate(0,-50%);
+      font-family: 'Press Start 2P', cursive;
+   }
+   #data {
+    position: absolute;
+      font-size: 15px;
+      color: black;
+      margin:0;
+      padding: 6px;
+      top: 20%;
+      transform:translate(0,-50%);
+      font-family: 'Press Start 2P', cursive;
+   }
+  </style>
+</head>
+
+<body>
+  
+  <div id="overlay">
+    <div id="boll14"></div><div id="boll15"></div><div id="boll16"></div><div id="boll17"></div><div id="boll18"></div><div id="boll19"></div><div id="boll20"></div><div id="boll21"></div><div id="boll22"></div><div id="boll23"></div><div id="boll24"></div><div id="boll25"></div><div id="boll26"></div><div id="boll27"></div><div id="boll28"></div><div id="boll29"></div><div id="boll30"></div><div id="boll31"></div><div id="boll32"></div><div id="boll33"></div><div id="boll34"></div><div id="boll35"></div><div id="boll36"></div><div id="boll37"></div><div id="boll38"></div><div id="boll39"></div><div id="boll40"></div><div id="boll41"></div><div id="boll42"></div><div id="boll43"></div><div id="boll44"></div><div id="boll45"></div><div id="boll46"></div><div id="boll47"></div><div id="boll48"></div><div id="boll49"></div><div id="boll50"></div><div id="boll51"></div><div id="boll52"></div><div id="boll53"></div><div id="boll54"></div><div id="boll55"></div><div id="boll56"></div><div id="boll57"></div><div id="boll58"></div><div id="boll59"></div><div id="boll60"></div><div id="boll61"></div><div id="boll62"></div><div id="boll63"></div><div id="boll64"></div><div id="boll65"></div><div id="boll66"></div><div id="boll67"></div><div id="boll68"></div><div id="boll69"></div><div id="boll70"></div><div id="boll71"></div><div id="boll72"></div><div id="boll73"></div><div id="boll74"></div><div id="boll75"></div><div id="boll76"></div><div id="boll77"></div><div id="boll78"></div><div id="boll79"></div><div id="boll80"></div><div id="boll81"></div><div id="boll82"></div><div id="boll83"></div><div id="boll84"></div><div id="boll85"></div><div id="boll86"></div><div id="boll87"></div><div id="boll88"></div><div id="boll89"></div><div id="boll90"></div><div id="boll91"></div><div id="boll92"></div><div id="boll93"></div><div id="boll94"></div><div id="boll95"></div><div id="boll96"></div><div id="boll97"></div><div id="boll98"></div><div id="boll99"></div><div id="boll100"></div><div id="boll101"></div><div id="boll102"></div><div id="boll103"></div><div id="boll104"></div><div id="boll105"></div><div id="boll106"></div><div id="boll107"></div><div id="boll108"></div><div id="boll109"></div><div id="boll110"></div><div id="boll111"></div><div id="boll112"></div><div id="boll113"></div><div id="boll114"></div><div id="boll115"></div>
+<div id="bollAnimation14"></div><div id="bollAnimation15"></div><div id="bollAnimation16"></div><div id="bollAnimation17"></div><div id="bollAnimation18"></div><div id="bollAnimation19"></div><div id="bollAnimation20"></div><div id="bollAnimation21"></div><div id="bollAnimation22"></div><div id="bollAnimation23"></div><div id="bollAnimation24"></div><div id="bollAnimation25"></div><div id="bollAnimation26"></div><div id="bollAnimation27"></div><div id="bollAnimation28"></div><div id="bollAnimation29"></div><div id="bollAnimation30"></div><div id="bollAnimation31"></div><div id="bollAnimation32"></div><div id="bollAnimation33"></div><div id="bollAnimation34"></div><div id="bollAnimation35"></div><div id="bollAnimation36"></div><div id="bollAnimation37"></div><div id="bollAnimation38"></div><div id="bollAnimation39"></div><div id="bollAnimation40"></div><div id="bollAnimation41"></div><div id="bollAnimation42"></div><div id="bollAnimation43"></div><div id="bollAnimation44"></div><div id="bollAnimation45"></div><div id="bollAnimation46"></div><div id="bollAnimation47"></div><div id="bollAnimation48"></div><div id="bollAnimation49"></div><div id="bollAnimation50"></div><div id="bollAnimation51"></div><div id="bollAnimation52"></div><div id="bollAnimation53"></div><div id="bollAnimation54"></div><div id="bollAnimation55"></div><div id="bollAnimation56"></div><div id="bollAnimation57"></div><div id="bollAnimation58"></div><div id="bollAnimation59"></div><div id="bollAnimation60"></div><div id="bollAnimation61"></div><div id="bollAnimation62"></div><div id="bollAnimation63"></div><div id="bollAnimation64"></div><div id="bollAnimation65"></div><div id="bollAnimation66"></div><div id="bollAnimation67"></div><div id="bollAnimation68"></div><div id="bollAnimation69"></div><div id="bollAnimation70"></div><div id="bollAnimation71"></div><div id="bollAnimation72"></div><div id="bollAnimation73"></div><div id="bollAnimation74"></div><div id="bollAnimation75"></div><div id="bollAnimation76"></div><div id="bollAnimation77"></div><div id="bollAnimation78"></div><div id="bollAnimation79"></div><div id="bollAnimation80"></div><div id="bollAnimation81"></div><div id="bollAnimation82"></div><div id="bollAnimation83"></div><div id="bollAnimation84"></div><div id="bollAnimation85"></div><div id="bollAnimation86"></div><div id="bollAnimation87"></div><div id="bollAnimation88"></div><div id="bollAnimation89"></div><div id="bollAnimation90"></div><div id="bollAnimation91"></div><div id="bollAnimation92"></div><div id="bollAnimation93"></div><div id="bollAnimation94"></div><div id="bollAnimation95"></div><div id="bollAnimation96"></div><div id="bollAnimation97"></div><div id="bollAnimation98"></div><div id="bollAnimation99"></div><div id="bollAnimation100"></div><div id="bollAnimation101"></div><div id="bollAnimation102"></div><div id="bollAnimation103"></div><div id="bollAnimation104"></div><div id="bollAnimation105"></div><div id="bollAnimation106"></div><div id="bollAnimation107"></div><div id="bollAnimation108"></div><div id="bollAnimation109"></div><div id="bollAnimation110"></div><div id="bollAnimation111"></div><div id="bollAnimation112"></div><div id="bollAnimation113"></div><div id="bollAnimation114"></div><div id="bollAnimation115"></div>
+<div id="pascalGroup" style="display: none">
+  <div id="pascal14"></div><div id="pascal15"></div><div id="pascal16"></div><div id="pascal17"></div><div id="pascal18"></div><div id="pascal19"></div><div id="pascal20"></div><div id="pascal21"></div><div id="pascal22"></div><div id="pascal23"></div><div id="pascal24"></div><div id="pascal25"></div><div id="pascal26"></div><div id="pascal27"></div><div id="pascal28"></div><div id="pascal29"></div><div id="pascal30"></div><div id="pascal31"></div><div id="pascal32"></div><div id="pascal33"></div><div id="pascal34"></div><div id="pascal35"></div><div id="pascal36"></div><div id="pascal37"></div><div id="pascal38"></div><div id="pascal39"></div><div id="pascal40"></div><div id="pascal41"></div><div id="pascal42"></div><div id="pascal43"></div><div id="pascal44"></div><div id="pascal45"></div><div id="pascal46"></div><div id="pascal47"></div><div id="pascal48"></div><div id="pascal49"></div><div id="pascal50"></div><div id="pascal51"></div><div id="pascal52"></div><div id="pascal53"></div><div id="pascal54"></div><div id="pascal55"></div><div id="pascal56"></div><div id="pascal57"></div><div id="pascal58"></div><div id="pascal59"></div><div id="pascal60"></div><div id="pascal61"></div><div id="pascal62"></div><div id="pascal63"></div><div id="pascal64"></div><div id="pascal65"></div><div id="pascal66"></div><div id="pascal67"></div><div id="pascal68"></div><div id="pascal69"></div><div id="pascal70"></div><div id="pascal71"></div><div id="pascal72"></div><div id="pascal73"></div><div id="pascal74"></div><div id="pascal75"></div><div id="pascal76"></div><div id="pascal77"></div><div id="pascal78"></div><div id="pascal79"></div><div id="pascal80"></div><div id="pascal81"></div><div id="pascal82"></div><div id="pascal83"></div><div id="pascal84"></div><div id="pascal85"></div><div id="pascal86"></div><div id="pascal87"></div><div id="pascal88"></div><div id="pascal89"></div><div id="pascal90"></div><div id="pascal91"></div><div id="pascal92"></div><div id="pascal93"></div><div id="pascal94"></div><div id="pascal95"></div><div id="pascal96"></div><div id="pascal97"></div><div id="pascal98"></div><div id="pascal99"></div><div id="pascal100"></div><div id="pascal101"></div><div id="pascal102"></div><div id="pascal103"></div><div id="pascal104"></div><div id="pascal105"></div><div id="pascal106"></div><div id="pascal107"></div><div id="pascal108"></div><div id="pascal109"></div><div id="pascal110"></div><div id="pascal111"></div><div id="pascal112"></div><div id="pascal113"></div><div id="pascal114"></div><div id="pascal115"></div>
+  <div id="pascalValue14"></div><div id="pascalValue15">1</div><div id="pascalValue16"></div><div id="pascalValue17"></div><div id="pascalValue18">1</div><div id="pascalValue19">1</div><div id="pascalValue20"></div><div id="pascalValue21"></div><div id="pascalValue22">1</div><div id="pascalValue23">2</div><div id="pascalValue24">1</div><div id="pascalValue25"></div><div id="pascalValue26"></div><div id="pascalValue27">1</div><div id="pascalValue28">3</div><div id="pascalValue29">3</div><div id="pascalValue30">1</div><div id="pascalValue31"></div><div id="pascalValue32"></div><div id="pascalValue33">1</div><div id="pascalValue34">4</div><div id="pascalValue35">6</div><div id="pascalValue36">4</div><div id="pascalValue37">1</div><div id="pascalValue38"></div><div id="pascalValue39"></div><div id="pascalValue40">1</div><div id="pascalValue41">5</div><div id="pascalValue42">10</div><div id="pascalValue43">10</div><div id="pascalValue44">5</div><div id="pascalValue45">1</div><div id="pascalValue46"></div><div id="pascalValue47"></div><div id="pascalValue48">1</div><div id="pascalValue49">6</div><div id="pascalValue50">15</div><div id="pascalValue51">20</div><div id="pascalValue52">15</div><div id="pascalValue53">6</div><div id="pascalValue54">1</div><div id="pascalValue55"></div><div id="pascalValue56"></div><div id="pascalValue57">1</div><div id="pascalValue58">7</div><div id="pascalValue59">21</div><div id="pascalValue60">35</div><div id="pascalValue61">35</div><div id="pascalValue62">21</div><div id="pascalValue63">7</div><div id="pascalValue64">1</div><div id="pascalValue65"></div><div id="pascalValue66"></div><div id="pascalValue67">1</div><div id="pascalValue68">8</div><div id="pascalValue69">28</div><div id="pascalValue70">56</div><div id="pascalValue71">70</div><div id="pascalValue72">56</div><div id="pascalValue73">28</div><div id="pascalValue74">8</div><div id="pascalValue75">1</div><div id="pascalValue76"></div><div id="pascalValue77"></div><div id="pascalValue78">1</div><div id="pascalValue79">9</div><div id="pascalValue80">36</div><div id="pascalValue81">84</div><div id="pascalValue82">126</div><div id="pascalValue83">126</div><div id="pascalValue84">84</div><div id="pascalValue85">36</div><div id="pascalValue86">9</div><div id="pascalValue87">1</div><div id="pascalValue88"></div><div id="pascalValue89"></div><div id="pascalValue90">1</div><div id="pascalValue91">10</div><div id="pascalValue92">45</div><div id="pascalValue93">120</div><div id="pascalValue94">210</div><div id="pascalValue95">252</div><div id="pascalValue96">210</div><div id="pascalValue97">120</div><div id="pascalValue98">45</div><div id="pascalValue99">10</div><div id="pascalValue100">1</div><div id="pascalValue101"></div><div id="pascalValue102"></div><div id="pascalValue103">1</div><div id="pascalValue104">11</div><div id="pascalValue105">55</div><div id="pascalValue106">165</div><div id="pascalValue107">330</div><div id="pascalValue108">462</div><div id="pascalValue109">462</div><div id="pascalValue110">330</div><div id="pascalValue111">165</div><div id="pascalValue112">55</div><div id="pascalValue113">11</div><div id="pascalValue114">1</div><div id="pascalValue115"></div>
+</div>
+
+</div>
+  <div id="overlaytop"> 
+   
+  <div class="settingsbox" onclick="settingstoggle()">
+    <div class="kugghjuloutline">	</div>
+    <div class="kugghjul">
+    <div class="kuggjul kugg1">
+    <div class="kuggjul kugg2">
+    <div class="kuggjul kugg3">
+    <div class="kuggjul kugg4">
+    <div class="kuggjul kugg5">
+    <div class="kuggjul kugg6">
+    <div class="kuggjul kugg7">
+    <div class="kuggjul kugg8">
+    <div class="kuggjul kugg9">
+    <div class="kuggjul kugg10">
+    <div class="kuggjul kugg11">
+    <div class="kuggjul kugg12"></div></div></div></div></div></div></div></div></div></div></div></div></div></div>
+    <div id="pascalicon" onclick="toggled()">
+    <div id="pascalpiece"></div>
+    <div id="pascalpiece2"></div>
+    <div id="pascalpiece3"></div>
+    </div>
+    <div id="playpause" onclick="playpause()"></div><div style="display:flex; position: absolute; left:300px; top:50%; transform:translate(0,-50%);"><div id="betprog"></div><div id="betbet"></div></div>
+    <p id="pengar"></p>
+    </div>
+  <div id="settings" style="display: none;">
+    <h3 style="font-family: 'Teko', sans-serif; font-size:25px; color:#a7b2cc;">Inställningar</h3>
+    <div id="holderboxsettings">
+    <div class="form-group">
+      <input id="betinput" type="text" size="1" oninput="this.setAttribute('size',this.value.length||=1)">
+        <span id="gång-gånger">gång kommer programmet köras</span>
+    </div>
+    <div class="form-group">
+      <input id="ändraPengar" type="text" size="1" oninput="this.setAttribute('size',this.value.length||=1)">
+        <span id="krona-kronor-S">kronor att simulera</span>
+    </div>
+    <div class="form-group">
+      <input id="betvalue" type="text" size="1" oninput="this.setAttribute('size',this.value.length||=1)" >
+        <span id="krona-kronor-B">krona vid varje bollsläpp</span>
+    </div>
+    <div class="form-group">
+      <input id="drops" type="text" size="1" oninput="this.setAttribute('size',this.value.length||=1)" style="left:0px;" >
+        <span>bollsläpp per sekund</span>
+    </div>
+  </div>
+  <span id="inställningsfel"></span>
+  <button id="saved" onclick="startvärde()">Spara</button>  
+  </div>
+</div>
+  <div id="normalfordelningcanvas">
+  <div id="filled"></div>
+  <div id="id1"><div id="id1text"></div></div>
+  <div id="id2"><div id="id2text"></div></div>
+  <div id="id3"><div id="id3text"></div></div>
+  <div id="id4"><div id="id4text"></div></div>
+  <div id="id5"><div id="id5text"></div></div>
+  <div id="id6"><div id="id6text"></div></div>
+  <div id="id7"><div id="id7text"></div></div>
+  <div id="id8"><div id="id8text"></div></div>
+  <div id="id9"><div id="id9text"></div></div>
+  <div id="id10"><div id="id10text"></div></div>
+  <div id="id11"><div id="id11text"></div></div>
+  <div id="id12"><div id="id12text"></div></div>
+  <div id="id13"><div id="id13text"></div></div>
+  </div>
+
+  <div id="holderbets">
+    <p id="bets">Vinst/förlust</p>
+    <p id="tot"></p>
+    <p id="bet"></p>
+    <p id="bet2"></p>
+    <p id="bet3"></p>
+    <div id="bethistory">
+      <div id="smoothingleft" style="left: -138px; top: 0;"></div>
+      <div id="smoothingright" style="left: 144px; top: 0;"></div>
+    </div>
+  </div>
+
+  <script>
+    let play = false;
+    let session_id = 1;
+      var toggle = false;
+      function toggled() {
+      if (toggle == false) {
+      toggle = true;
+      toggle = toggle;
+      document.getElementById("pascalGroup").style.display = "block";
+    }
+    else {
+      toggle = false;
+      toggle = toggle;
+      document.getElementById("pascalGroup").style.display = "none";
+    }
+    }
+    let runs = 0;
+    var existerandepartiklar = 0;
+    let screen = window.innerWidth;
+    let windowHalf = (screen/2) - 200;
+    var startVärde =  190.5;
+    var startVärde2 =  178;
+    var mellanRum = 25;
+    var nedTopp = 69.25;
+    var ned = 29;
+    var storlekPeg = 3.5;
+    var rad1 = 30;
+    var rad2 = rad1 + ned -1;
+    var rad3 = rad2 + ned;
+    var rad4 = rad3 + ned;
+    var rad5 = rad4 + ned;
+    var rad6 = rad5 + ned;
+    var rad7 = rad6 + ned;
+    var rad8 = rad7 + ned;
+    var rad9 = rad8 + ned;
+    var rad10 = rad9 + ned;
+    var rad11 = rad10 + ned;
+    var rad12 = rad11 + ned;
+
+    const betinputgånger = document.querySelector('#betinput');
+    betinputgånger.addEventListener('change', (event) => {
+      if(event.target.value > 1) {
+        document.getElementById("gång-gånger").innerHTML ="gånger kommer programmet köras"
+      } else if(event.target.value == 1) {
+        document.getElementById("gång-gånger").innerHTML ="gång kommer programmet köras"
+      }});
+
+      const simulerakronor = document.querySelector('#ändraPengar');
+      simulerakronor.addEventListener('change', (event) => {
+      if(event.target.value > 1) {
+        document.getElementById("krona-kronor-S").innerHTML ="kronor att simulera"
+      } else if(event.target.value == 1) {
+        document.getElementById("krona-kronor-S").innerHTML ="krona att simulera"
+      }});
+
+      const bollsläppkronor = document.querySelector('#betvalue');
+      bollsläppkronor.addEventListener('change', (event) => {
+      if(event.target.value > 1) {
+        document.getElementById("krona-kronor-B").innerHTML ="kronor vid varje bollsläpp"
+      } else if(event.target.value == 1) {
+        document.getElementById("krona-kronor-B").innerHTML ="krona vid varje bollsläpp"
+      }});
+
+    document.getElementById("boll14").style.left = ((startVärde-mellanRum)+'px'); document.getElementById("boll14").style.top = (nedTopp+'px'); document.getElementById("boll15").style.left = ((startVärde)+'px'); document.getElementById("boll15").style.top = (nedTopp+'px'); document.getElementById("boll16").style.left = ((startVärde+mellanRum)+'px'); document.getElementById("boll16").style.top = (nedTopp+'px'); document.getElementById("boll17").style.left = ((startVärde2-mellanRum)+'px');document.getElementById("boll17").style.top = ((nedTopp+ned)+'px'); document.getElementById("boll18").style.left = ((startVärde2)+'px'); document.getElementById("boll18").style.top = ((nedTopp+ned)+'px'); document.getElementById("boll19").style.left = ((startVärde2+mellanRum)+'px'); document.getElementById("boll19").style.top = ((nedTopp+ned)+'px'); document.getElementById("boll20").style.left = ((startVärde2+mellanRum*2)+'px'); document.getElementById("boll20").style.top = ((nedTopp+ned)+'px'); document.getElementById("boll21").style.left = ((startVärde-mellanRum*2)+'px');document.getElementById("boll21").style.top = ((nedTopp+rad2)+'px'); document.getElementById("boll22").style.left = ((startVärde-mellanRum)+'px');document.getElementById("boll22").style.top = ((nedTopp+rad2)+'px'); document.getElementById("boll23").style.left = ((startVärde)+'px'); document.getElementById("boll23").style.top = ((nedTopp+rad2)+'px'); document.getElementById("boll24").style.left = ((startVärde+mellanRum)+'px'); document.getElementById("boll24").style.top = ((nedTopp+rad2)+'px'); document.getElementById("boll25").style.left = ((startVärde+mellanRum*2)+'px'); document.getElementById("boll25").style.top = ((nedTopp+rad2)+'px'); document.getElementById("boll26").style.left = ((startVärde2-mellanRum*2)+'px');document.getElementById("boll26").style.top = ((nedTopp+rad3)+'px'); document.getElementById("boll27").style.left = ((startVärde2-mellanRum)+'px');document.getElementById("boll27").style.top = ((nedTopp+rad3)+'px'); document.getElementById("boll28").style.left = ((startVärde2)+'px');document.getElementById("boll28").style.top = ((nedTopp+rad3)+'px'); document.getElementById("boll29").style.left = ((startVärde2+mellanRum)+'px'); document.getElementById("boll29").style.top = ((nedTopp+rad3)+'px'); document.getElementById("boll30").style.left = ((startVärde2+mellanRum*2)+'px'); document.getElementById("boll30").style.top = ((nedTopp+rad3)+'px'); document.getElementById("boll31").style.left = ((startVärde2+mellanRum*3)+'px'); document.getElementById("boll31").style.top = ((nedTopp+rad3)+'px'); document.getElementById("boll32").style.left = ((startVärde-mellanRum*3)+'px'); document.getElementById("boll32").style.top = ((nedTopp+rad4)+'px'); document.getElementById("boll33").style.left = ((startVärde-mellanRum*2)+'px'); document.getElementById("boll33").style.top = ((nedTopp+rad4)+'px'); document.getElementById("boll34").style.left = ((startVärde-mellanRum)+'px');document.getElementById("boll34").style.top = ((nedTopp+rad4)+'px'); document.getElementById("boll35").style.left = ((startVärde)+'px');document.getElementById("boll35").style.top = ((nedTopp+rad4)+'px'); document.getElementById("boll36").style.left = ((startVärde+mellanRum)+'px'); document.getElementById("boll36").style.top = ((nedTopp+rad4)+'px'); document.getElementById("boll37").style.left = ((startVärde+mellanRum*2)+'px'); document.getElementById("boll37").style.top = ((nedTopp+rad4)+'px'); document.getElementById("boll38").style.left = ((startVärde+mellanRum*3)+'px'); document.getElementById("boll38").style.top = ((nedTopp+rad4)+'px'); document.getElementById("boll39").style.left = ((startVärde2-mellanRum*3)+'px'); document.getElementById("boll39").style.top = ((nedTopp+rad5)+'px'); document.getElementById("boll40").style.left = ((startVärde2-mellanRum*2)+'px'); document.getElementById("boll40").style.top = ((nedTopp+rad5)+'px'); document.getElementById("boll41").style.left = ((startVärde2-mellanRum)+'px');document.getElementById("boll41").style.top = ((nedTopp+rad5)+'px'); document.getElementById("boll42").style.left = ((startVärde2)+'px');document.getElementById("boll42").style.top = ((nedTopp+rad5)+'px'); document.getElementById("boll43").style.left = ((startVärde2+mellanRum)+'px'); document.getElementById("boll43").style.top = ((nedTopp+rad5)+'px'); document.getElementById("boll44").style.left = ((startVärde2+mellanRum*2)+'px'); document.getElementById("boll44").style.top = ((nedTopp+rad5)+'px'); document.getElementById("boll45").style.left = ((startVärde2+mellanRum*3)+'px'); document.getElementById("boll45").style.top = ((nedTopp+rad5)+'px'); document.getElementById("boll46").style.left = ((startVärde2+mellanRum*4)+'px'); document.getElementById("boll46").style.top = ((nedTopp+rad5)+'px'); document.getElementById("boll47").style.left = ((startVärde-mellanRum*4)+'px'); document.getElementById("boll47").style.top = ((nedTopp+rad6)+'px'); document.getElementById("boll48").style.left = ((startVärde-mellanRum*3)+'px'); document.getElementById("boll48").style.top = ((nedTopp+rad6)+'px'); document.getElementById("boll49").style.left = ((startVärde-mellanRum*2)+'px'); document.getElementById("boll49").style.top = ((nedTopp+rad6)+'px'); document.getElementById("boll50").style.left = ((startVärde-mellanRum)+'px');document.getElementById("boll50").style.top = ((nedTopp+rad6)+'px'); document.getElementById("boll51").style.left = ((startVärde)+'px');document.getElementById("boll51").style.top = ((nedTopp+rad6)+'px'); document.getElementById("boll52").style.left = ((startVärde+mellanRum)+'px'); document.getElementById("boll52").style.top = ((nedTopp+rad6)+'px'); document.getElementById("boll53").style.left = ((startVärde+mellanRum*2)+'px'); document.getElementById("boll53").style.top = ((nedTopp+rad6)+'px'); document.getElementById("boll54").style.left = ((startVärde+mellanRum*3)+'px'); document.getElementById("boll54").style.top = ((nedTopp+rad6)+'px'); document.getElementById("boll55").style.left = ((startVärde+mellanRum*4)+'px'); document.getElementById("boll55").style.top = ((nedTopp+rad6)+'px'); document.getElementById("boll56").style.left = ((startVärde2-mellanRum*4)+'px'); document.getElementById("boll56").style.top = ((nedTopp+rad7)+'px'); document.getElementById("boll57").style.left = ((startVärde2-mellanRum*3)+'px'); document.getElementById("boll57").style.top = ((nedTopp+rad7)+'px'); document.getElementById("boll58").style.left = ((startVärde2-mellanRum*2)+'px'); document.getElementById("boll58").style.top = ((nedTopp+rad7)+'px'); document.getElementById("boll59").style.left = ((startVärde2-mellanRum)+'px');document.getElementById("boll59").style.top = ((nedTopp+rad7)+'px'); document.getElementById("boll60").style.left = ((startVärde2)+'px');document.getElementById("boll60").style.top = ((nedTopp+rad7)+'px'); document.getElementById("boll61").style.left = ((startVärde2+mellanRum)+'px'); document.getElementById("boll61").style.top = ((nedTopp+rad7)+'px'); document.getElementById("boll62").style.left = ((startVärde2+mellanRum*2)+'px'); document.getElementById("boll62").style.top = ((nedTopp+rad7)+'px'); document.getElementById("boll63").style.left = ((startVärde2+mellanRum*3)+'px'); document.getElementById("boll63").style.top = ((nedTopp+rad7)+'px'); document.getElementById("boll64").style.left = ((startVärde2+mellanRum*4)+'px'); document.getElementById("boll64").style.top = ((nedTopp+rad7)+'px'); document.getElementById("boll65").style.left = ((startVärde2+mellanRum*5)+'px'); document.getElementById("boll65").style.top = ((nedTopp+rad7)+'px'); document.getElementById("boll66").style.left = ((startVärde-mellanRum*5)+'px'); document.getElementById("boll66").style.top = ((nedTopp+rad8)+'px'); document.getElementById("boll67").style.left = ((startVärde-mellanRum*4)+'px'); document.getElementById("boll67").style.top = ((nedTopp+rad8)+'px'); document.getElementById("boll68").style.left = ((startVärde-mellanRum*3)+'px'); document.getElementById("boll68").style.top = ((nedTopp+rad8)+'px'); document.getElementById("boll69").style.left = ((startVärde-mellanRum*2)+'px'); document.getElementById("boll69").style.top = ((nedTopp+rad8)+'px'); document.getElementById("boll70").style.left = ((startVärde-mellanRum)+'px');document.getElementById("boll70").style.top = ((nedTopp+rad8)+'px'); document.getElementById("boll71").style.left = ((startVärde)+'px');document.getElementById("boll71").style.top = ((nedTopp+rad8)+'px'); document.getElementById("boll72").style.left = ((startVärde+mellanRum)+'px'); document.getElementById("boll72").style.top = ((nedTopp+rad8)+'px'); document.getElementById("boll73").style.left = ((startVärde+mellanRum*2)+'px'); document.getElementById("boll73").style.top = ((nedTopp+rad8)+'px'); document.getElementById("boll74").style.left = ((startVärde+mellanRum*3)+'px'); document.getElementById("boll74").style.top = ((nedTopp+rad8)+'px'); document.getElementById("boll75").style.left = ((startVärde+mellanRum*4)+'px'); document.getElementById("boll75").style.top = ((nedTopp+rad8)+'px'); document.getElementById("boll76").style.left = ((startVärde+mellanRum*5)+'px'); document.getElementById("boll76").style.top = ((nedTopp+rad8)+'px'); document.getElementById("boll77").style.left = ((startVärde2-mellanRum*5)+'px'); document.getElementById("boll77").style.top = ((nedTopp+rad9)+'px'); document.getElementById("boll78").style.left = ((startVärde2-mellanRum*4)+'px'); document.getElementById("boll78").style.top = ((nedTopp+rad9)+'px'); document.getElementById("boll79").style.left = ((startVärde2-mellanRum*3)+'px'); document.getElementById("boll79").style.top = ((nedTopp+rad9)+'px'); document.getElementById("boll80").style.left = ((startVärde2-mellanRum*2)+'px'); document.getElementById("boll80").style.top = ((nedTopp+rad9)+'px'); document.getElementById("boll81").style.left = ((startVärde2-mellanRum)+'px');document.getElementById("boll81").style.top = ((nedTopp+rad9)+'px'); document.getElementById("boll82").style.left = ((startVärde2)+'px');document.getElementById("boll82").style.top = ((nedTopp+rad9)+'px'); document.getElementById("boll83").style.left = ((startVärde2+mellanRum)+'px'); document.getElementById("boll83").style.top = ((nedTopp+rad9)+'px'); document.getElementById("boll84").style.left = ((startVärde2+mellanRum*2)+'px'); document.getElementById("boll84").style.top = ((nedTopp+rad9)+'px'); document.getElementById("boll85").style.left = ((startVärde2+mellanRum*3)+'px'); document.getElementById("boll85").style.top = ((nedTopp+rad9)+'px'); document.getElementById("boll86").style.left = ((startVärde2+mellanRum*4)+'px'); document.getElementById("boll86").style.top = ((nedTopp+rad9)+'px'); document.getElementById("boll87").style.left = ((startVärde2+mellanRum*5)+'px'); document.getElementById("boll87").style.top = ((nedTopp+rad9)+'px'); document.getElementById("boll88").style.left = ((startVärde2+mellanRum*6)+'px'); document.getElementById("boll88").style.top = ((nedTopp+rad9)+'px'); document.getElementById("boll89").style.left = ((startVärde-mellanRum*6)+'px'); document.getElementById("boll89").style.top = ((nedTopp+rad10)+'px'); document.getElementById("boll90").style.left = ((startVärde-mellanRum*5)+'px'); document.getElementById("boll90").style.top = ((nedTopp+rad10)+'px'); document.getElementById("boll91").style.left = ((startVärde-mellanRum*4)+'px'); document.getElementById("boll91").style.top = ((nedTopp+rad10)+'px'); document.getElementById("boll92").style.left = ((startVärde-mellanRum*3)+'px'); document.getElementById("boll92").style.top = ((nedTopp+rad10)+'px'); document.getElementById("boll93").style.left = ((startVärde-mellanRum*2)+'px'); document.getElementById("boll93").style.top = ((nedTopp+rad10)+'px'); document.getElementById("boll94").style.left = ((startVärde-mellanRum)+'px');document.getElementById("boll94").style.top = ((nedTopp+rad10)+'px'); document.getElementById("boll95").style.left = ((startVärde)+'px');document.getElementById("boll95").style.top = ((nedTopp+rad10)+'px'); document.getElementById("boll96").style.left = ((startVärde+mellanRum)+'px'); document.getElementById("boll96").style.top = ((nedTopp+rad10)+'px'); document.getElementById("boll97").style.left = ((startVärde+mellanRum*2)+'px'); document.getElementById("boll97").style.top = ((nedTopp+rad10)+'px'); document.getElementById("boll98").style.left = ((startVärde+mellanRum*3)+'px'); document.getElementById("boll98").style.top = ((nedTopp+rad10)+'px'); document.getElementById("boll99").style.left = ((startVärde+mellanRum*4)+'px'); document.getElementById("boll99").style.top = ((nedTopp+rad10)+'px'); document.getElementById("boll100").style.left = ((startVärde+mellanRum*5)+'px'); document.getElementById("boll100").style.top = ((nedTopp+rad10)+'px'); document.getElementById("boll101").style.left = ((startVärde+mellanRum*6)+'px'); document.getElementById("boll101").style.top = ((nedTopp+rad10)+'px'); document.getElementById("boll102").style.left = ((startVärde2-mellanRum*6)+'px'); document.getElementById("boll102").style.top = ((nedTopp+rad11)+'px'); document.getElementById("boll103").style.left = ((startVärde2-mellanRum*5)+'px'); document.getElementById("boll103").style.top = ((nedTopp+rad11)+'px'); document.getElementById("boll104").style.left = ((startVärde2-mellanRum*4)+'px'); document.getElementById("boll104").style.top = ((nedTopp+rad11)+'px'); document.getElementById("boll105").style.left = ((startVärde2-mellanRum*3)+'px'); document.getElementById("boll105").style.top = ((nedTopp+rad11)+'px'); document.getElementById("boll106").style.left = ((startVärde2-mellanRum*2)+'px'); document.getElementById("boll106").style.top = ((nedTopp+rad11)+'px'); document.getElementById("boll107").style.left = ((startVärde2-mellanRum)+'px');document.getElementById("boll107").style.top = ((nedTopp+rad11)+'px'); document.getElementById("boll108").style.left = ((startVärde2)+'px');document.getElementById("boll108").style.top = ((nedTopp+rad11)+'px'); document.getElementById("boll109").style.left = ((startVärde2+mellanRum)+'px'); document.getElementById("boll109").style.top = ((nedTopp+rad11)+'px'); document.getElementById("boll110").style.left = ((startVärde2+mellanRum*2)+'px'); document.getElementById("boll110").style.top = ((nedTopp+rad11)+'px'); document.getElementById("boll111").style.left = ((startVärde2+mellanRum*3)+'px'); document.getElementById("boll111").style.top = ((nedTopp+rad11)+'px'); document.getElementById("boll112").style.left = ((startVärde2+mellanRum*4)+'px'); document.getElementById("boll112").style.top = ((nedTopp+rad11)+'px'); document.getElementById("boll113").style.left = ((startVärde2+mellanRum*5)+'px'); document.getElementById("boll113").style.top = ((nedTopp+rad11)+'px'); document.getElementById("boll114").style.left = ((startVärde2+mellanRum*6)+'px'); document.getElementById("boll114").style.top = ((nedTopp+rad11)+'px'); document.getElementById("boll115").style.left = ((startVärde2+mellanRum*7)+'px'); document.getElementById("boll115").style.top = ((nedTopp+rad11)+'px'); 
+    var boll14 = document.querySelector('#boll14'); boll14.dataset.content = ' ' + peg14+'/'+existerandepartiklar; var boll15 = document.querySelector('#boll15'); boll15.dataset.content = ' ' + peg15+'/'+existerandepartiklar; var boll16 = document.querySelector('#boll16'); boll16.dataset.content = ' ' + peg16+'/'+existerandepartiklar; var boll17 = document.querySelector('#boll17'); boll17.dataset.content = ' ' + peg17+'/'+existerandepartiklar; var boll18 = document.querySelector('#boll18'); boll18.dataset.content = ' ' + peg18+'/'+existerandepartiklar; var boll19 = document.querySelector('#boll19'); boll19.dataset.content = ' ' + peg19+'/'+existerandepartiklar; var boll20 = document.querySelector('#boll20'); boll20.dataset.content = ' ' + peg20+'/'+existerandepartiklar; var boll21 = document.querySelector('#boll21'); boll21.dataset.content = ' ' + peg21+'/'+existerandepartiklar; var boll22 = document.querySelector('#boll22'); boll22.dataset.content = ' ' + peg22+'/'+existerandepartiklar; var boll23 = document.querySelector('#boll23'); boll23.dataset.content = ' ' + peg23+'/'+existerandepartiklar; var boll24 = document.querySelector('#boll24'); boll24.dataset.content = ' ' + peg24+'/'+existerandepartiklar; var boll25 = document.querySelector('#boll25'); boll25.dataset.content = ' ' + peg25+'/'+existerandepartiklar; var boll26 = document.querySelector('#boll26'); boll26.dataset.content = ' ' + peg26+'/'+existerandepartiklar; var boll27 = document.querySelector('#boll27'); boll27.dataset.content = ' ' + peg27+'/'+existerandepartiklar; var boll28 = document.querySelector('#boll28'); boll28.dataset.content = ' ' + peg28+'/'+existerandepartiklar; var boll29 = document.querySelector('#boll29'); boll29.dataset.content = ' ' + peg29+'/'+existerandepartiklar; var boll30 = document.querySelector('#boll30'); boll30.dataset.content = ' ' + peg30+'/'+existerandepartiklar; var boll31 = document.querySelector('#boll31'); boll31.dataset.content = ' ' + peg31+'/'+existerandepartiklar; var boll32 = document.querySelector('#boll32'); boll32.dataset.content = ' ' + peg32+'/'+existerandepartiklar; var boll33 = document.querySelector('#boll33'); boll33.dataset.content = ' ' + peg33+'/'+existerandepartiklar; var boll34 = document.querySelector('#boll34'); boll34.dataset.content = ' ' + peg34+'/'+existerandepartiklar; var boll35 = document.querySelector('#boll35'); boll35.dataset.content = ' ' + peg35+'/'+existerandepartiklar; var boll36 = document.querySelector('#boll36'); boll36.dataset.content = ' ' + peg36+'/'+existerandepartiklar; var boll37 = document.querySelector('#boll37'); boll37.dataset.content = ' ' + peg37+'/'+existerandepartiklar; var boll38 = document.querySelector('#boll38'); boll38.dataset.content = ' ' + peg38+'/'+existerandepartiklar; var boll39 = document.querySelector('#boll39'); boll39.dataset.content = ' ' + peg39+'/'+existerandepartiklar; var boll40 = document.querySelector('#boll40'); boll40.dataset.content = ' ' + peg40+'/'+existerandepartiklar; var boll41 = document.querySelector('#boll41'); boll41.dataset.content = ' ' + peg41+'/'+existerandepartiklar; var boll42 = document.querySelector('#boll42'); boll42.dataset.content = ' ' + peg42+'/'+existerandepartiklar; var boll43 = document.querySelector('#boll43'); boll43.dataset.content = ' ' + peg43+'/'+existerandepartiklar; var boll44 = document.querySelector('#boll44'); boll44.dataset.content = ' ' + peg44+'/'+existerandepartiklar; var boll45 = document.querySelector('#boll45'); boll45.dataset.content = ' ' + peg45+'/'+existerandepartiklar; var boll46 = document.querySelector('#boll46'); boll46.dataset.content = ' ' + peg46+'/'+existerandepartiklar; var boll47 = document.querySelector('#boll47'); boll47.dataset.content = ' ' + peg47+'/'+existerandepartiklar; var boll48 = document.querySelector('#boll48'); boll48.dataset.content = ' ' + peg48+'/'+existerandepartiklar; var boll49 = document.querySelector('#boll49'); boll49.dataset.content = ' ' + peg49+'/'+existerandepartiklar; var boll50 = document.querySelector('#boll50'); boll50.dataset.content = ' ' + peg50+'/'+existerandepartiklar; var boll51 = document.querySelector('#boll51'); boll51.dataset.content = ' ' + peg51+'/'+existerandepartiklar; var boll52 = document.querySelector('#boll52'); boll52.dataset.content = ' ' + peg52+'/'+existerandepartiklar; var boll53 = document.querySelector('#boll53'); boll53.dataset.content = ' ' + peg53+'/'+existerandepartiklar; var boll54 = document.querySelector('#boll54'); boll54.dataset.content = ' ' + peg54+'/'+existerandepartiklar; var boll55 = document.querySelector('#boll55'); boll55.dataset.content = ' ' + peg55+'/'+existerandepartiklar; var boll56 = document.querySelector('#boll56'); boll56.dataset.content = ' ' + peg56+'/'+existerandepartiklar; var boll57 = document.querySelector('#boll57'); boll57.dataset.content = ' ' + peg57+'/'+existerandepartiklar; var boll58 = document.querySelector('#boll58'); boll58.dataset.content = ' ' + peg58+'/'+existerandepartiklar; var boll59 = document.querySelector('#boll59'); boll59.dataset.content = ' ' + peg59+'/'+existerandepartiklar; var boll60 = document.querySelector('#boll60'); boll60.dataset.content = ' ' + peg50+'/'+existerandepartiklar; var boll61 = document.querySelector('#boll61'); boll61.dataset.content = ' ' + peg61+'/'+existerandepartiklar; var boll62 = document.querySelector('#boll62'); boll62.dataset.content = ' ' + peg62+'/'+existerandepartiklar; var boll63 = document.querySelector('#boll63'); boll63.dataset.content = ' ' + peg63+'/'+existerandepartiklar; var boll64 = document.querySelector('#boll64'); boll64.dataset.content = ' ' + peg64+'/'+existerandepartiklar; var boll65 = document.querySelector('#boll65'); boll65.dataset.content = ' ' + peg65+'/'+existerandepartiklar; var boll66 = document.querySelector('#boll66'); boll66.dataset.content = ' ' + peg66+'/'+existerandepartiklar; var boll67 = document.querySelector('#boll67'); boll67.dataset.content = ' ' + peg67+'/'+existerandepartiklar; var boll68 = document.querySelector('#boll68'); boll68.dataset.content = ' ' + peg68+'/'+existerandepartiklar; var boll70 = document.querySelector('#boll70'); boll70.dataset.content = ' ' + peg70+'/'+existerandepartiklar; var boll71 = document.querySelector('#boll71'); boll71.dataset.content = ' ' + peg71+'/'+existerandepartiklar; var boll72 = document.querySelector('#boll72'); boll72.dataset.content = ' ' + peg72+'/'+existerandepartiklar; var boll73 = document.querySelector('#boll73'); boll73.dataset.content = ' ' + peg73+'/'+existerandepartiklar; var boll74 = document.querySelector('#boll74'); boll74.dataset.content = ' ' + peg74+'/'+existerandepartiklar; var boll75 = document.querySelector('#boll75'); boll75.dataset.content = ' ' + peg75+'/'+existerandepartiklar; var boll76 = document.querySelector('#boll76'); boll76.dataset.content = ' ' + peg76+'/'+existerandepartiklar; var boll77 = document.querySelector('#boll77'); boll77.dataset.content = ' ' + peg77+'/'+existerandepartiklar; var boll78 = document.querySelector('#boll78'); boll78.dataset.content = ' ' + peg78+'/'+existerandepartiklar; var boll79 = document.querySelector('#boll79'); boll79.dataset.content = ' ' + peg79+'/'+existerandepartiklar; var boll80 = document.querySelector('#boll80'); boll80.dataset.content = ' ' + peg80+'/'+existerandepartiklar; var boll81 = document.querySelector('#boll81'); boll81.dataset.content = ' ' + peg81+'/'+existerandepartiklar; var boll82 = document.querySelector('#boll82'); boll82.dataset.content = ' ' + peg82+'/'+existerandepartiklar; var boll83 = document.querySelector('#boll83'); boll83.dataset.content = ' ' + peg83+'/'+existerandepartiklar; var boll84 = document.querySelector('#boll84'); boll84.dataset.content = ' ' + peg84+'/'+existerandepartiklar; var boll85 = document.querySelector('#boll85'); boll85.dataset.content = ' ' + peg85+'/'+existerandepartiklar; var boll86 = document.querySelector('#boll86'); boll86.dataset.content = ' ' + peg86+'/'+existerandepartiklar; var boll87 = document.querySelector('#boll87'); boll87.dataset.content = ' ' + peg87+'/'+existerandepartiklar; var boll88 = document.querySelector('#boll88'); boll88.dataset.content = ' ' + peg88+'/'+existerandepartiklar; var boll89 = document.querySelector('#boll89'); boll89.dataset.content = ' ' + peg89+'/'+existerandepartiklar; var boll90 = document.querySelector('#boll90'); boll90.dataset.content = ' ' + peg90+'/'+existerandepartiklar; var boll91 = document.querySelector('#boll91'); boll91.dataset.content = ' ' + peg91+'/'+existerandepartiklar; var boll92 = document.querySelector('#boll92'); boll92.dataset.content = ' ' + peg92+'/'+existerandepartiklar; var boll93 = document.querySelector('#boll93'); boll93.dataset.content = ' ' + peg93+'/'+existerandepartiklar; var boll94 = document.querySelector('#boll94'); boll94.dataset.content = ' ' + peg94+'/'+existerandepartiklar; var boll95 = document.querySelector('#boll95'); boll95.dataset.content = ' ' + peg95+'/'+existerandepartiklar; var boll96 = document.querySelector('#boll96'); boll96.dataset.content = ' ' + peg96+'/'+existerandepartiklar; var boll97 = document.querySelector('#boll97'); boll97.dataset.content = ' ' + peg97+'/'+existerandepartiklar; var boll98 = document.querySelector('#boll98'); boll98.dataset.content = ' ' + peg98+'/'+existerandepartiklar; var boll99 = document.querySelector('#boll99'); boll99.dataset.content = ' ' + peg99+'/'+existerandepartiklar; var boll100 = document.querySelector('#boll100'); boll100.dataset.content = ' ' + peg100+'/'+existerandepartiklar; var boll101 = document.querySelector('#boll101'); boll101.dataset.content = ' ' + peg101+'/'+existerandepartiklar; var boll102 = document.querySelector('#boll102'); boll102.dataset.content = ' ' + peg102+'/'+existerandepartiklar; var boll103 = document.querySelector('#boll103'); boll103.dataset.content = ' ' + peg103+'/'+existerandepartiklar; var boll104 = document.querySelector('#boll104'); boll104.dataset.content = ' ' + peg104+'/'+existerandepartiklar; var boll105 = document.querySelector('#boll105'); boll105.dataset.content = ' ' + peg105+'/'+existerandepartiklar; var boll106 = document.querySelector('#boll106'); boll106.dataset.content = ' ' + peg106+'/'+existerandepartiklar; var boll107 = document.querySelector('#boll107'); boll107.dataset.content = ' ' + peg107+'/'+existerandepartiklar; var boll108 = document.querySelector('#boll108'); boll108.dataset.content = ' ' + peg108+'/'+existerandepartiklar; var boll109 = document.querySelector('#boll109'); boll109.dataset.content = ' ' + peg109+'/'+existerandepartiklar; var boll110 = document.querySelector('#boll110'); boll110.dataset.content = ' ' + peg110+'/'+existerandepartiklar; var boll111 = document.querySelector('#boll111'); boll111.dataset.content = ' ' + peg111+'/'+existerandepartiklar; var boll112 = document.querySelector('#boll112'); boll112.dataset.content = ' ' + peg112+'/'+existerandepartiklar; var boll113 = document.querySelector('#boll113'); boll113.dataset.content = ' ' + peg113+'/'+existerandepartiklar; var boll114 = document.querySelector('#boll114'); boll114.dataset.content = ' ' + peg114+'/'+existerandepartiklar; var boll115 = document.querySelector('#boll115'); boll115.dataset.content = ' ' + peg115+'/'+existerandepartiklar; 
+    document.getElementById("bollAnimation14").style.left = ((startVärde-mellanRum)+'px'); document.getElementById("bollAnimation14").style.top = (nedTopp+'px'); document.getElementById("bollAnimation15").style.left = ((startVärde)+'px'); document.getElementById("bollAnimation15").style.top = (nedTopp+'px'); document.getElementById("bollAnimation16").style.left = ((startVärde+mellanRum)+'px'); document.getElementById("bollAnimation16").style.top = (nedTopp+'px'); document.getElementById("bollAnimation17").style.left = ((startVärde2-mellanRum)+'px');document.getElementById("bollAnimation17").style.top = ((nedTopp+ned)+'px'); document.getElementById("bollAnimation18").style.left = ((startVärde2)+'px'); document.getElementById("bollAnimation18").style.top = ((nedTopp+ned)+'px'); document.getElementById("bollAnimation19").style.left = ((startVärde2+mellanRum)+'px'); document.getElementById("bollAnimation19").style.top = ((nedTopp+ned)+'px'); document.getElementById("bollAnimation20").style.left = ((startVärde2+mellanRum*2)+'px'); document.getElementById("bollAnimation20").style.top = ((nedTopp+ned)+'px'); document.getElementById("bollAnimation21").style.left = ((startVärde-mellanRum*2)+'px');document.getElementById("bollAnimation21").style.top = ((nedTopp+rad2)+'px'); document.getElementById("bollAnimation22").style.left = ((startVärde-mellanRum)+'px');document.getElementById("bollAnimation22").style.top = ((nedTopp+rad2)+'px'); document.getElementById("bollAnimation23").style.left = ((startVärde)+'px'); document.getElementById("bollAnimation23").style.top = ((nedTopp+rad2)+'px'); document.getElementById("bollAnimation24").style.left = ((startVärde+mellanRum)+'px'); document.getElementById("bollAnimation24").style.top = ((nedTopp+rad2)+'px'); document.getElementById("bollAnimation25").style.left = ((startVärde+mellanRum*2)+'px'); document.getElementById("bollAnimation25").style.top = ((nedTopp+rad2)+'px'); document.getElementById("bollAnimation26").style.left = ((startVärde2-mellanRum*2)+'px');document.getElementById("bollAnimation26").style.top = ((nedTopp+rad3)+'px'); document.getElementById("bollAnimation27").style.left = ((startVärde2-mellanRum)+'px');document.getElementById("bollAnimation27").style.top = ((nedTopp+rad3)+'px'); document.getElementById("bollAnimation28").style.left = ((startVärde2)+'px');document.getElementById("bollAnimation28").style.top = ((nedTopp+rad3)+'px'); document.getElementById("bollAnimation29").style.left = ((startVärde2+mellanRum)+'px'); document.getElementById("bollAnimation29").style.top = ((nedTopp+rad3)+'px'); document.getElementById("bollAnimation30").style.left = ((startVärde2+mellanRum*2)+'px'); document.getElementById("bollAnimation30").style.top = ((nedTopp+rad3)+'px'); document.getElementById("bollAnimation31").style.left = ((startVärde2+mellanRum*3)+'px'); document.getElementById("bollAnimation31").style.top = ((nedTopp+rad3)+'px'); document.getElementById("bollAnimation32").style.left = ((startVärde-mellanRum*3)+'px'); document.getElementById("bollAnimation32").style.top = ((nedTopp+rad4)+'px'); document.getElementById("bollAnimation33").style.left = ((startVärde-mellanRum*2)+'px'); document.getElementById("bollAnimation33").style.top = ((nedTopp+rad4)+'px'); document.getElementById("bollAnimation34").style.left = ((startVärde-mellanRum)+'px');document.getElementById("bollAnimation34").style.top = ((nedTopp+rad4)+'px'); document.getElementById("bollAnimation35").style.left = ((startVärde)+'px');document.getElementById("bollAnimation35").style.top = ((nedTopp+rad4)+'px'); document.getElementById("bollAnimation36").style.left = ((startVärde+mellanRum)+'px'); document.getElementById("bollAnimation36").style.top = ((nedTopp+rad4)+'px'); document.getElementById("bollAnimation37").style.left = ((startVärde+mellanRum*2)+'px'); document.getElementById("bollAnimation37").style.top = ((nedTopp+rad4)+'px'); document.getElementById("bollAnimation38").style.left = ((startVärde+mellanRum*3)+'px'); document.getElementById("bollAnimation38").style.top = ((nedTopp+rad4)+'px'); document.getElementById("bollAnimation39").style.left = ((startVärde2-mellanRum*3)+'px'); document.getElementById("bollAnimation39").style.top = ((nedTopp+rad5)+'px'); document.getElementById("bollAnimation40").style.left = ((startVärde2-mellanRum*2)+'px'); document.getElementById("bollAnimation40").style.top = ((nedTopp+rad5)+'px'); document.getElementById("bollAnimation41").style.left = ((startVärde2-mellanRum)+'px');document.getElementById("bollAnimation41").style.top = ((nedTopp+rad5)+'px'); document.getElementById("bollAnimation42").style.left = ((startVärde2)+'px');document.getElementById("bollAnimation42").style.top = ((nedTopp+rad5)+'px'); document.getElementById("bollAnimation43").style.left = ((startVärde2+mellanRum)+'px'); document.getElementById("bollAnimation43").style.top = ((nedTopp+rad5)+'px'); document.getElementById("bollAnimation44").style.left = ((startVärde2+mellanRum*2)+'px'); document.getElementById("bollAnimation44").style.top = ((nedTopp+rad5)+'px'); document.getElementById("bollAnimation45").style.left = ((startVärde2+mellanRum*3)+'px'); document.getElementById("bollAnimation45").style.top = ((nedTopp+rad5)+'px'); document.getElementById("bollAnimation46").style.left = ((startVärde2+mellanRum*4)+'px'); document.getElementById("bollAnimation46").style.top = ((nedTopp+rad5)+'px'); document.getElementById("bollAnimation47").style.left = ((startVärde-mellanRum*4)+'px'); document.getElementById("bollAnimation47").style.top = ((nedTopp+rad6)+'px'); document.getElementById("bollAnimation48").style.left = ((startVärde-mellanRum*3)+'px'); document.getElementById("bollAnimation48").style.top = ((nedTopp+rad6)+'px'); document.getElementById("bollAnimation49").style.left = ((startVärde-mellanRum*2)+'px'); document.getElementById("bollAnimation49").style.top = ((nedTopp+rad6)+'px'); document.getElementById("bollAnimation50").style.left = ((startVärde-mellanRum)+'px');document.getElementById("bollAnimation50").style.top = ((nedTopp+rad6)+'px'); document.getElementById("bollAnimation51").style.left = ((startVärde)+'px');document.getElementById("bollAnimation51").style.top = ((nedTopp+rad6)+'px'); document.getElementById("bollAnimation52").style.left = ((startVärde+mellanRum)+'px'); document.getElementById("bollAnimation52").style.top = ((nedTopp+rad6)+'px'); document.getElementById("bollAnimation53").style.left = ((startVärde+mellanRum*2)+'px'); document.getElementById("bollAnimation53").style.top = ((nedTopp+rad6)+'px'); document.getElementById("bollAnimation54").style.left = ((startVärde+mellanRum*3)+'px'); document.getElementById("bollAnimation54").style.top = ((nedTopp+rad6)+'px'); document.getElementById("bollAnimation55").style.left = ((startVärde+mellanRum*4)+'px'); document.getElementById("bollAnimation55").style.top = ((nedTopp+rad6)+'px'); document.getElementById("bollAnimation56").style.left = ((startVärde2-mellanRum*4)+'px'); document.getElementById("bollAnimation56").style.top = ((nedTopp+rad7)+'px'); document.getElementById("bollAnimation57").style.left = ((startVärde2-mellanRum*3)+'px'); document.getElementById("bollAnimation57").style.top = ((nedTopp+rad7)+'px'); document.getElementById("bollAnimation58").style.left = ((startVärde2-mellanRum*2)+'px'); document.getElementById("bollAnimation58").style.top = ((nedTopp+rad7)+'px'); document.getElementById("bollAnimation59").style.left = ((startVärde2-mellanRum)+'px');document.getElementById("bollAnimation59").style.top = ((nedTopp+rad7)+'px'); document.getElementById("bollAnimation60").style.left = ((startVärde2)+'px');document.getElementById("bollAnimation60").style.top = ((nedTopp+rad7)+'px'); document.getElementById("bollAnimation61").style.left = ((startVärde2+mellanRum)+'px'); document.getElementById("bollAnimation61").style.top = ((nedTopp+rad7)+'px'); document.getElementById("bollAnimation62").style.left = ((startVärde2+mellanRum*2)+'px'); document.getElementById("bollAnimation62").style.top = ((nedTopp+rad7)+'px'); document.getElementById("bollAnimation63").style.left = ((startVärde2+mellanRum*3)+'px'); document.getElementById("bollAnimation63").style.top = ((nedTopp+rad7)+'px'); document.getElementById("bollAnimation64").style.left = ((startVärde2+mellanRum*4)+'px'); document.getElementById("bollAnimation64").style.top = ((nedTopp+rad7)+'px'); document.getElementById("bollAnimation65").style.left = ((startVärde2+mellanRum*5)+'px'); document.getElementById("bollAnimation65").style.top = ((nedTopp+rad7)+'px'); document.getElementById("bollAnimation66").style.left = ((startVärde-mellanRum*5)+'px'); document.getElementById("bollAnimation66").style.top = ((nedTopp+rad8)+'px'); document.getElementById("bollAnimation67").style.left = ((startVärde-mellanRum*4)+'px'); document.getElementById("bollAnimation67").style.top = ((nedTopp+rad8)+'px'); document.getElementById("bollAnimation68").style.left = ((startVärde-mellanRum*3)+'px'); document.getElementById("bollAnimation68").style.top = ((nedTopp+rad8)+'px'); document.getElementById("bollAnimation69").style.left = ((startVärde-mellanRum*2)+'px'); document.getElementById("bollAnimation69").style.top = ((nedTopp+rad8)+'px'); document.getElementById("bollAnimation70").style.left = ((startVärde-mellanRum)+'px');document.getElementById("bollAnimation70").style.top = ((nedTopp+rad8)+'px'); document.getElementById("bollAnimation71").style.left = ((startVärde)+'px');document.getElementById("bollAnimation71").style.top = ((nedTopp+rad8)+'px'); document.getElementById("bollAnimation72").style.left = ((startVärde+mellanRum)+'px'); document.getElementById("bollAnimation72").style.top = ((nedTopp+rad8)+'px'); document.getElementById("bollAnimation73").style.left = ((startVärde+mellanRum*2)+'px'); document.getElementById("bollAnimation73").style.top = ((nedTopp+rad8)+'px'); document.getElementById("bollAnimation74").style.left = ((startVärde+mellanRum*3)+'px'); document.getElementById("bollAnimation74").style.top = ((nedTopp+rad8)+'px'); document.getElementById("bollAnimation75").style.left = ((startVärde+mellanRum*4)+'px'); document.getElementById("bollAnimation75").style.top = ((nedTopp+rad8)+'px'); document.getElementById("bollAnimation76").style.left = ((startVärde+mellanRum*5)+'px'); document.getElementById("bollAnimation76").style.top = ((nedTopp+rad8)+'px'); document.getElementById("bollAnimation77").style.left = ((startVärde2-mellanRum*5)+'px'); document.getElementById("bollAnimation77").style.top = ((nedTopp+rad9)+'px'); document.getElementById("bollAnimation78").style.left = ((startVärde2-mellanRum*4)+'px'); document.getElementById("bollAnimation78").style.top = ((nedTopp+rad9)+'px'); document.getElementById("bollAnimation79").style.left = ((startVärde2-mellanRum*3)+'px'); document.getElementById("bollAnimation79").style.top = ((nedTopp+rad9)+'px'); document.getElementById("bollAnimation80").style.left = ((startVärde2-mellanRum*2)+'px'); document.getElementById("bollAnimation80").style.top = ((nedTopp+rad9)+'px'); document.getElementById("bollAnimation81").style.left = ((startVärde2-mellanRum)+'px');document.getElementById("bollAnimation81").style.top = ((nedTopp+rad9)+'px'); document.getElementById("bollAnimation82").style.left = ((startVärde2)+'px');document.getElementById("bollAnimation82").style.top = ((nedTopp+rad9)+'px'); document.getElementById("bollAnimation83").style.left = ((startVärde2+mellanRum)+'px'); document.getElementById("bollAnimation83").style.top = ((nedTopp+rad9)+'px'); document.getElementById("bollAnimation84").style.left = ((startVärde2+mellanRum*2)+'px'); document.getElementById("bollAnimation84").style.top = ((nedTopp+rad9)+'px'); document.getElementById("bollAnimation85").style.left = ((startVärde2+mellanRum*3)+'px'); document.getElementById("bollAnimation85").style.top = ((nedTopp+rad9)+'px'); document.getElementById("bollAnimation86").style.left = ((startVärde2+mellanRum*4)+'px'); document.getElementById("bollAnimation86").style.top = ((nedTopp+rad9)+'px'); document.getElementById("bollAnimation87").style.left = ((startVärde2+mellanRum*5)+'px'); document.getElementById("bollAnimation87").style.top = ((nedTopp+rad9)+'px'); document.getElementById("bollAnimation88").style.left = ((startVärde2+mellanRum*6)+'px'); document.getElementById("bollAnimation88").style.top = ((nedTopp+rad9)+'px'); document.getElementById("bollAnimation89").style.left = ((startVärde-mellanRum*6)+'px'); document.getElementById("bollAnimation89").style.top = ((nedTopp+rad10)+'px'); document.getElementById("bollAnimation90").style.left = ((startVärde-mellanRum*5)+'px'); document.getElementById("bollAnimation90").style.top = ((nedTopp+rad10)+'px'); document.getElementById("bollAnimation91").style.left = ((startVärde-mellanRum*4)+'px'); document.getElementById("bollAnimation91").style.top = ((nedTopp+rad10)+'px'); document.getElementById("bollAnimation92").style.left = ((startVärde-mellanRum*3)+'px'); document.getElementById("bollAnimation92").style.top = ((nedTopp+rad10)+'px'); document.getElementById("bollAnimation93").style.left = ((startVärde-mellanRum*2)+'px'); document.getElementById("bollAnimation93").style.top = ((nedTopp+rad10)+'px'); document.getElementById("bollAnimation94").style.left = ((startVärde-mellanRum)+'px');document.getElementById("bollAnimation94").style.top = ((nedTopp+rad10)+'px'); document.getElementById("bollAnimation95").style.left = ((startVärde)+'px');document.getElementById("bollAnimation95").style.top = ((nedTopp+rad10)+'px'); document.getElementById("bollAnimation96").style.left = ((startVärde+mellanRum)+'px'); document.getElementById("bollAnimation96").style.top = ((nedTopp+rad10)+'px'); document.getElementById("bollAnimation97").style.left = ((startVärde+mellanRum*2)+'px'); document.getElementById("bollAnimation97").style.top = ((nedTopp+rad10)+'px'); document.getElementById("bollAnimation98").style.left = ((startVärde+mellanRum*3)+'px'); document.getElementById("bollAnimation98").style.top = ((nedTopp+rad10)+'px'); document.getElementById("bollAnimation99").style.left = ((startVärde+mellanRum*4)+'px'); document.getElementById("bollAnimation99").style.top = ((nedTopp+rad10)+'px'); document.getElementById("bollAnimation100").style.left = ((startVärde+mellanRum*5)+'px'); document.getElementById("bollAnimation100").style.top = ((nedTopp+rad10)+'px'); document.getElementById("bollAnimation101").style.left = ((startVärde+mellanRum*6)+'px'); document.getElementById("bollAnimation101").style.top = ((nedTopp+rad10)+'px'); document.getElementById("bollAnimation102").style.left = ((startVärde2-mellanRum*6)+'px'); document.getElementById("bollAnimation102").style.top = ((nedTopp+rad11)+'px'); document.getElementById("bollAnimation103").style.left = ((startVärde2-mellanRum*5)+'px'); document.getElementById("bollAnimation103").style.top = ((nedTopp+rad11)+'px'); document.getElementById("bollAnimation104").style.left = ((startVärde2-mellanRum*4)+'px'); document.getElementById("bollAnimation104").style.top = ((nedTopp+rad11)+'px'); document.getElementById("bollAnimation105").style.left = ((startVärde2-mellanRum*3)+'px'); document.getElementById("bollAnimation105").style.top = ((nedTopp+rad11)+'px'); document.getElementById("bollAnimation106").style.left = ((startVärde2-mellanRum*2)+'px'); document.getElementById("bollAnimation106").style.top = ((nedTopp+rad11)+'px'); document.getElementById("bollAnimation107").style.left = ((startVärde2-mellanRum)+'px');document.getElementById("bollAnimation107").style.top = ((nedTopp+rad11)+'px'); document.getElementById("bollAnimation108").style.left = ((startVärde2)+'px');document.getElementById("bollAnimation108").style.top = ((nedTopp+rad11)+'px'); document.getElementById("bollAnimation109").style.left = ((startVärde2+mellanRum)+'px'); document.getElementById("bollAnimation109").style.top = ((nedTopp+rad11)+'px'); document.getElementById("bollAnimation110").style.left = ((startVärde2+mellanRum*2)+'px'); document.getElementById("bollAnimation110").style.top = ((nedTopp+rad11)+'px'); document.getElementById("bollAnimation111").style.left = ((startVärde2+mellanRum*3)+'px'); document.getElementById("bollAnimation111").style.top = ((nedTopp+rad11)+'px'); document.getElementById("bollAnimation112").style.left = ((startVärde2+mellanRum*4)+'px'); document.getElementById("bollAnimation112").style.top = ((nedTopp+rad11)+'px'); document.getElementById("bollAnimation113").style.left = ((startVärde2+mellanRum*5)+'px'); document.getElementById("bollAnimation113").style.top = ((nedTopp+rad11)+'px'); document.getElementById("bollAnimation114").style.left = ((startVärde2+mellanRum*6)+'px'); document.getElementById("bollAnimation114").style.top = ((nedTopp+rad11)+'px'); document.getElementById("bollAnimation115").style.left = ((startVärde2+mellanRum*7)+'px'); document.getElementById("bollAnimation115").style.top = ((nedTopp+rad11)+'px'); 
+
+    document.getElementById("pascal14").style.left = ((startVärde-mellanRum)+'px'); document.getElementById("pascal14").style.top = (nedTopp+'px'); document.getElementById("pascal15").style.left = ((startVärde)+'px'); document.getElementById("pascal15").style.top = (nedTopp+'px'); document.getElementById("pascal16").style.left = ((startVärde+mellanRum)+'px'); document.getElementById("pascal16").style.top = (nedTopp+'px'); document.getElementById("pascal17").style.left = ((startVärde2-mellanRum)+'px');document.getElementById("pascal17").style.top = ((nedTopp+ned)+'px'); document.getElementById("pascal18").style.left = ((startVärde2)+'px'); document.getElementById("pascal18").style.top = ((nedTopp+ned)+'px'); document.getElementById("pascal19").style.left = ((startVärde2+mellanRum)+'px'); document.getElementById("pascal19").style.top = ((nedTopp+ned)+'px'); document.getElementById("pascal20").style.left = ((startVärde2+mellanRum*2)+'px'); document.getElementById("pascal20").style.top = ((nedTopp+ned)+'px'); document.getElementById("pascal21").style.left = ((startVärde-mellanRum*2)+'px');document.getElementById("pascal21").style.top = ((nedTopp+rad2)+'px'); document.getElementById("pascal22").style.left = ((startVärde-mellanRum)+'px');document.getElementById("pascal22").style.top = ((nedTopp+rad2)+'px'); document.getElementById("pascal23").style.left = ((startVärde)+'px'); document.getElementById("pascal23").style.top = ((nedTopp+rad2)+'px'); document.getElementById("pascal24").style.left = ((startVärde+mellanRum)+'px'); document.getElementById("pascal24").style.top = ((nedTopp+rad2)+'px'); document.getElementById("pascal25").style.left = ((startVärde+mellanRum*2)+'px'); document.getElementById("pascal25").style.top = ((nedTopp+rad2)+'px'); document.getElementById("pascal26").style.left = ((startVärde2-mellanRum*2)+'px');document.getElementById("pascal26").style.top = ((nedTopp+rad3)+'px'); document.getElementById("pascal27").style.left = ((startVärde2-mellanRum)+'px');document.getElementById("pascal27").style.top = ((nedTopp+rad3)+'px'); document.getElementById("pascal28").style.left = ((startVärde2)+'px');document.getElementById("pascal28").style.top = ((nedTopp+rad3)+'px'); document.getElementById("pascal29").style.left = ((startVärde2+mellanRum)+'px'); document.getElementById("pascal29").style.top = ((nedTopp+rad3)+'px'); document.getElementById("pascal30").style.left = ((startVärde2+mellanRum*2)+'px'); document.getElementById("pascal30").style.top = ((nedTopp+rad3)+'px'); document.getElementById("pascal31").style.left = ((startVärde2+mellanRum*3)+'px'); document.getElementById("pascal31").style.top = ((nedTopp+rad3)+'px'); document.getElementById("pascal32").style.left = ((startVärde-mellanRum*3)+'px'); document.getElementById("pascal32").style.top = ((nedTopp+rad4)+'px'); document.getElementById("pascal33").style.left = ((startVärde-mellanRum*2)+'px'); document.getElementById("pascal33").style.top = ((nedTopp+rad4)+'px'); document.getElementById("pascal34").style.left = ((startVärde-mellanRum)+'px');document.getElementById("pascal34").style.top = ((nedTopp+rad4)+'px'); document.getElementById("pascal35").style.left = ((startVärde)+'px');document.getElementById("pascal35").style.top = ((nedTopp+rad4)+'px'); document.getElementById("pascal36").style.left = ((startVärde+mellanRum)+'px'); document.getElementById("pascal36").style.top = ((nedTopp+rad4)+'px'); document.getElementById("pascal37").style.left = ((startVärde+mellanRum*2)+'px'); document.getElementById("pascal37").style.top = ((nedTopp+rad4)+'px'); document.getElementById("pascal38").style.left = ((startVärde+mellanRum*3)+'px'); document.getElementById("pascal38").style.top = ((nedTopp+rad4)+'px'); document.getElementById("pascal39").style.left = ((startVärde2-mellanRum*3)+'px'); document.getElementById("pascal39").style.top = ((nedTopp+rad5)+'px'); document.getElementById("pascal40").style.left = ((startVärde2-mellanRum*2)+'px'); document.getElementById("pascal40").style.top = ((nedTopp+rad5)+'px'); document.getElementById("pascal41").style.left = ((startVärde2-mellanRum)+'px');document.getElementById("pascal41").style.top = ((nedTopp+rad5)+'px'); document.getElementById("pascal42").style.left = ((startVärde2)+'px');document.getElementById("pascal42").style.top = ((nedTopp+rad5)+'px'); document.getElementById("pascal43").style.left = ((startVärde2+mellanRum)+'px'); document.getElementById("pascal43").style.top = ((nedTopp+rad5)+'px'); document.getElementById("pascal44").style.left = ((startVärde2+mellanRum*2)+'px'); document.getElementById("pascal44").style.top = ((nedTopp+rad5)+'px'); document.getElementById("pascal45").style.left = ((startVärde2+mellanRum*3)+'px'); document.getElementById("pascal45").style.top = ((nedTopp+rad5)+'px'); document.getElementById("pascal46").style.left = ((startVärde2+mellanRum*4)+'px'); document.getElementById("pascal46").style.top = ((nedTopp+rad5)+'px'); document.getElementById("pascal47").style.left = ((startVärde-mellanRum*4)+'px'); document.getElementById("pascal47").style.top = ((nedTopp+rad6)+'px'); document.getElementById("pascal48").style.left = ((startVärde-mellanRum*3)+'px'); document.getElementById("pascal48").style.top = ((nedTopp+rad6)+'px'); document.getElementById("pascal49").style.left = ((startVärde-mellanRum*2)+'px'); document.getElementById("pascal49").style.top = ((nedTopp+rad6)+'px'); document.getElementById("pascal50").style.left = ((startVärde-mellanRum)+'px');document.getElementById("pascal50").style.top = ((nedTopp+rad6)+'px'); document.getElementById("pascal51").style.left = ((startVärde)+'px');document.getElementById("pascal51").style.top = ((nedTopp+rad6)+'px'); document.getElementById("pascal52").style.left = ((startVärde+mellanRum)+'px'); document.getElementById("pascal52").style.top = ((nedTopp+rad6)+'px'); document.getElementById("pascal53").style.left = ((startVärde+mellanRum*2)+'px'); document.getElementById("pascal53").style.top = ((nedTopp+rad6)+'px'); document.getElementById("pascal54").style.left = ((startVärde+mellanRum*3)+'px'); document.getElementById("pascal54").style.top = ((nedTopp+rad6)+'px'); document.getElementById("pascal55").style.left = ((startVärde+mellanRum*4)+'px'); document.getElementById("pascal55").style.top = ((nedTopp+rad6)+'px'); document.getElementById("pascal56").style.left = ((startVärde2-mellanRum*4)+'px'); document.getElementById("pascal56").style.top = ((nedTopp+rad7)+'px'); document.getElementById("pascal57").style.left = ((startVärde2-mellanRum*3)+'px'); document.getElementById("pascal57").style.top = ((nedTopp+rad7)+'px'); document.getElementById("pascal58").style.left = ((startVärde2-mellanRum*2)+'px'); document.getElementById("pascal58").style.top = ((nedTopp+rad7)+'px'); document.getElementById("pascal59").style.left = ((startVärde2-mellanRum)+'px');document.getElementById("pascal59").style.top = ((nedTopp+rad7)+'px'); document.getElementById("pascal60").style.left = ((startVärde2)+'px');document.getElementById("pascal60").style.top = ((nedTopp+rad7)+'px'); document.getElementById("pascal61").style.left = ((startVärde2+mellanRum)+'px'); document.getElementById("pascal61").style.top = ((nedTopp+rad7)+'px'); document.getElementById("pascal62").style.left = ((startVärde2+mellanRum*2)+'px'); document.getElementById("pascal62").style.top = ((nedTopp+rad7)+'px'); document.getElementById("pascal63").style.left = ((startVärde2+mellanRum*3)+'px'); document.getElementById("pascal63").style.top = ((nedTopp+rad7)+'px'); document.getElementById("pascal64").style.left = ((startVärde2+mellanRum*4)+'px'); document.getElementById("pascal64").style.top = ((nedTopp+rad7)+'px'); document.getElementById("pascal65").style.left = ((startVärde2+mellanRum*5)+'px'); document.getElementById("pascal65").style.top = ((nedTopp+rad7)+'px'); document.getElementById("pascal66").style.left = ((startVärde-mellanRum*5)+'px'); document.getElementById("pascal66").style.top = ((nedTopp+rad8)+'px'); document.getElementById("pascal67").style.left = ((startVärde-mellanRum*4)+'px'); document.getElementById("pascal67").style.top = ((nedTopp+rad8)+'px'); document.getElementById("pascal68").style.left = ((startVärde-mellanRum*3)+'px'); document.getElementById("pascal68").style.top = ((nedTopp+rad8)+'px'); document.getElementById("pascal69").style.left = ((startVärde-mellanRum*2)+'px'); document.getElementById("pascal69").style.top = ((nedTopp+rad8)+'px'); document.getElementById("pascal70").style.left = ((startVärde-mellanRum)+'px');document.getElementById("pascal70").style.top = ((nedTopp+rad8)+'px'); document.getElementById("pascal71").style.left = ((startVärde)+'px');document.getElementById("pascal71").style.top = ((nedTopp+rad8)+'px'); document.getElementById("pascal72").style.left = ((startVärde+mellanRum)+'px'); document.getElementById("pascal72").style.top = ((nedTopp+rad8)+'px'); document.getElementById("pascal73").style.left = ((startVärde+mellanRum*2)+'px'); document.getElementById("pascal73").style.top = ((nedTopp+rad8)+'px'); document.getElementById("pascal74").style.left = ((startVärde+mellanRum*3)+'px'); document.getElementById("pascal74").style.top = ((nedTopp+rad8)+'px'); document.getElementById("pascal75").style.left = ((startVärde+mellanRum*4)+'px'); document.getElementById("pascal75").style.top = ((nedTopp+rad8)+'px'); document.getElementById("pascal76").style.left = ((startVärde+mellanRum*5)+'px'); document.getElementById("pascal76").style.top = ((nedTopp+rad8)+'px'); document.getElementById("pascal77").style.left = ((startVärde2-mellanRum*5)+'px'); document.getElementById("pascal77").style.top = ((nedTopp+rad9)+'px'); document.getElementById("pascal78").style.left = ((startVärde2-mellanRum*4)+'px'); document.getElementById("pascal78").style.top = ((nedTopp+rad9)+'px'); document.getElementById("pascal79").style.left = ((startVärde2-mellanRum*3)+'px'); document.getElementById("pascal79").style.top = ((nedTopp+rad9)+'px'); document.getElementById("pascal80").style.left = ((startVärde2-mellanRum*2)+'px'); document.getElementById("pascal80").style.top = ((nedTopp+rad9)+'px'); document.getElementById("pascal81").style.left = ((startVärde2-mellanRum)+'px');document.getElementById("pascal81").style.top = ((nedTopp+rad9)+'px'); document.getElementById("pascal82").style.left = ((startVärde2)+'px');document.getElementById("pascal82").style.top = ((nedTopp+rad9)+'px'); document.getElementById("pascal83").style.left = ((startVärde2+mellanRum)+'px'); document.getElementById("pascal83").style.top = ((nedTopp+rad9)+'px'); document.getElementById("pascal84").style.left = ((startVärde2+mellanRum*2)+'px'); document.getElementById("pascal84").style.top = ((nedTopp+rad9)+'px'); document.getElementById("pascal85").style.left = ((startVärde2+mellanRum*3)+'px'); document.getElementById("pascal85").style.top = ((nedTopp+rad9)+'px'); document.getElementById("pascal86").style.left = ((startVärde2+mellanRum*4)+'px'); document.getElementById("pascal86").style.top = ((nedTopp+rad9)+'px'); document.getElementById("pascal87").style.left = ((startVärde2+mellanRum*5)+'px'); document.getElementById("pascal87").style.top = ((nedTopp+rad9)+'px'); document.getElementById("pascal88").style.left = ((startVärde2+mellanRum*6)+'px'); document.getElementById("pascal88").style.top = ((nedTopp+rad9)+'px'); document.getElementById("pascal89").style.left = ((startVärde-mellanRum*6)+'px'); document.getElementById("pascal89").style.top = ((nedTopp+rad10)+'px'); document.getElementById("pascal90").style.left = ((startVärde-mellanRum*5)+'px'); document.getElementById("pascal90").style.top = ((nedTopp+rad10)+'px'); document.getElementById("pascal91").style.left = ((startVärde-mellanRum*4)+'px'); document.getElementById("pascal91").style.top = ((nedTopp+rad10)+'px'); document.getElementById("pascal92").style.left = ((startVärde-mellanRum*3)+'px'); document.getElementById("pascal92").style.top = ((nedTopp+rad10)+'px'); document.getElementById("pascal93").style.left = ((startVärde-mellanRum*2)+'px'); document.getElementById("pascal93").style.top = ((nedTopp+rad10)+'px'); document.getElementById("pascal94").style.left = ((startVärde-mellanRum)+'px');document.getElementById("pascal94").style.top = ((nedTopp+rad10)+'px'); document.getElementById("pascal95").style.left = ((startVärde)+'px');document.getElementById("pascal95").style.top = ((nedTopp+rad10)+'px'); document.getElementById("pascal96").style.left = ((startVärde+mellanRum)+'px'); document.getElementById("pascal96").style.top = ((nedTopp+rad10)+'px'); document.getElementById("pascal97").style.left = ((startVärde+mellanRum*2)+'px'); document.getElementById("pascal97").style.top = ((nedTopp+rad10)+'px'); document.getElementById("pascal98").style.left = ((startVärde+mellanRum*3)+'px'); document.getElementById("pascal98").style.top = ((nedTopp+rad10)+'px'); document.getElementById("pascal99").style.left = ((startVärde+mellanRum*4)+'px'); document.getElementById("pascal99").style.top = ((nedTopp+rad10)+'px'); document.getElementById("pascal100").style.left = ((startVärde+mellanRum*5)+'px'); document.getElementById("pascal100").style.top = ((nedTopp+rad10)+'px'); document.getElementById("pascal101").style.left = ((startVärde+mellanRum*6)+'px'); document.getElementById("pascal101").style.top = ((nedTopp+rad10)+'px'); document.getElementById("pascal102").style.left = ((startVärde2-mellanRum*6)+'px'); document.getElementById("pascal102").style.top = ((nedTopp+rad11)+'px'); document.getElementById("pascal103").style.left = ((startVärde2-mellanRum*5)+'px'); document.getElementById("pascal103").style.top = ((nedTopp+rad11)+'px'); document.getElementById("pascal104").style.left = ((startVärde2-mellanRum*4)+'px'); document.getElementById("pascal104").style.top = ((nedTopp+rad11)+'px'); document.getElementById("pascal105").style.left = ((startVärde2-mellanRum*3)+'px'); document.getElementById("pascal105").style.top = ((nedTopp+rad11)+'px'); document.getElementById("pascal106").style.left = ((startVärde2-mellanRum*2)+'px'); document.getElementById("pascal106").style.top = ((nedTopp+rad11)+'px'); document.getElementById("pascal107").style.left = ((startVärde2-mellanRum)+'px');document.getElementById("pascal107").style.top = ((nedTopp+rad11)+'px'); document.getElementById("pascal108").style.left = ((startVärde2)+'px');document.getElementById("pascal108").style.top = ((nedTopp+rad11)+'px'); document.getElementById("pascal109").style.left = ((startVärde2+mellanRum)+'px'); document.getElementById("pascal109").style.top = ((nedTopp+rad11)+'px'); document.getElementById("pascal110").style.left = ((startVärde2+mellanRum*2)+'px'); document.getElementById("pascal110").style.top = ((nedTopp+rad11)+'px'); document.getElementById("pascal111").style.left = ((startVärde2+mellanRum*3)+'px'); document.getElementById("pascal111").style.top = ((nedTopp+rad11)+'px'); document.getElementById("pascal112").style.left = ((startVärde2+mellanRum*4)+'px'); document.getElementById("pascal112").style.top = ((nedTopp+rad11)+'px'); document.getElementById("pascal113").style.left = ((startVärde2+mellanRum*5)+'px'); document.getElementById("pascal113").style.top = ((nedTopp+rad11)+'px'); document.getElementById("pascal114").style.left = ((startVärde2+mellanRum*6)+'px'); document.getElementById("pascal114").style.top = ((nedTopp+rad11)+'px'); document.getElementById("pascal115").style.left = ((startVärde2+mellanRum*7)+'px'); document.getElementById("pascal115").style.top = ((nedTopp+rad11)+'px'); 
+
+    document.getElementById("pascalValue14").style.left = ((startVärde-mellanRum)+'px'); document.getElementById("pascalValue14").style.top = (nedTopp+'px'); document.getElementById("pascalValue15").style.left = ((startVärde)+'px'); document.getElementById("pascalValue15").style.top = (nedTopp+'px'); document.getElementById("pascalValue16").style.left = ((startVärde+mellanRum)+'px'); document.getElementById("pascalValue16").style.top = (nedTopp+'px'); document.getElementById("pascalValue17").style.left = ((startVärde2-mellanRum)+'px');document.getElementById("pascalValue17").style.top = ((nedTopp+ned)+'px'); document.getElementById("pascalValue18").style.left = ((startVärde2)+'px'); document.getElementById("pascalValue18").style.top = ((nedTopp+ned)+'px'); document.getElementById("pascalValue19").style.left = ((startVärde2+mellanRum)+'px'); document.getElementById("pascalValue19").style.top = ((nedTopp+ned)+'px'); document.getElementById("pascalValue20").style.left = ((startVärde2+mellanRum*2)+'px'); document.getElementById("pascalValue20").style.top = ((nedTopp+ned)+'px'); document.getElementById("pascalValue21").style.left = ((startVärde-mellanRum*2)+'px');document.getElementById("pascalValue21").style.top = ((nedTopp+rad2)+'px'); document.getElementById("pascalValue22").style.left = ((startVärde-mellanRum)+'px');document.getElementById("pascalValue22").style.top = ((nedTopp+rad2)+'px'); document.getElementById("pascalValue23").style.left = ((startVärde)+'px'); document.getElementById("pascalValue23").style.top = ((nedTopp+rad2)+'px'); document.getElementById("pascalValue24").style.left = ((startVärde+mellanRum)+'px'); document.getElementById("pascalValue24").style.top = ((nedTopp+rad2)+'px'); document.getElementById("pascalValue25").style.left = ((startVärde+mellanRum*2)+'px'); document.getElementById("pascalValue25").style.top = ((nedTopp+rad2)+'px'); document.getElementById("pascalValue26").style.left = ((startVärde2-mellanRum*2)+'px');document.getElementById("pascalValue26").style.top = ((nedTopp+rad3)+'px'); document.getElementById("pascalValue27").style.left = ((startVärde2-mellanRum)+'px');document.getElementById("pascalValue27").style.top = ((nedTopp+rad3)+'px'); document.getElementById("pascalValue28").style.left = ((startVärde2)+'px');document.getElementById("pascalValue28").style.top = ((nedTopp+rad3)+'px'); document.getElementById("pascalValue29").style.left = ((startVärde2+mellanRum)+'px'); document.getElementById("pascalValue29").style.top = ((nedTopp+rad3)+'px'); document.getElementById("pascalValue30").style.left = ((startVärde2+mellanRum*2)+'px'); document.getElementById("pascalValue30").style.top = ((nedTopp+rad3)+'px'); document.getElementById("pascalValue31").style.left = ((startVärde2+mellanRum*3)+'px'); document.getElementById("pascalValue31").style.top = ((nedTopp+rad3)+'px'); document.getElementById("pascalValue32").style.left = ((startVärde-mellanRum*3)+'px'); document.getElementById("pascalValue32").style.top = ((nedTopp+rad4)+'px'); document.getElementById("pascalValue33").style.left = ((startVärde-mellanRum*2)+'px'); document.getElementById("pascalValue33").style.top = ((nedTopp+rad4)+'px'); document.getElementById("pascalValue34").style.left = ((startVärde-mellanRum)+'px');document.getElementById("pascalValue34").style.top = ((nedTopp+rad4)+'px'); document.getElementById("pascalValue35").style.left = ((startVärde)+'px');document.getElementById("pascalValue35").style.top = ((nedTopp+rad4)+'px'); document.getElementById("pascalValue36").style.left = ((startVärde+mellanRum)+'px'); document.getElementById("pascalValue36").style.top = ((nedTopp+rad4)+'px'); document.getElementById("pascalValue37").style.left = ((startVärde+mellanRum*2)+'px'); document.getElementById("pascalValue37").style.top = ((nedTopp+rad4)+'px'); document.getElementById("pascalValue38").style.left = ((startVärde+mellanRum*3)+'px'); document.getElementById("pascalValue38").style.top = ((nedTopp+rad4)+'px'); document.getElementById("pascalValue39").style.left = ((startVärde2-mellanRum*3)+'px'); document.getElementById("pascalValue39").style.top = ((nedTopp+rad5)+'px'); document.getElementById("pascalValue40").style.left = ((startVärde2-mellanRum*2)+'px'); document.getElementById("pascalValue40").style.top = ((nedTopp+rad5)+'px'); document.getElementById("pascalValue41").style.left = ((startVärde2-mellanRum)+'px');document.getElementById("pascalValue41").style.top = ((nedTopp+rad5)+'px'); document.getElementById("pascalValue42").style.left = ((startVärde2)+'px');document.getElementById("pascalValue42").style.top = ((nedTopp+rad5)+'px'); document.getElementById("pascalValue43").style.left = ((startVärde2+mellanRum)+'px'); document.getElementById("pascalValue43").style.top = ((nedTopp+rad5)+'px'); document.getElementById("pascalValue44").style.left = ((startVärde2+mellanRum*2)+'px'); document.getElementById("pascalValue44").style.top = ((nedTopp+rad5)+'px'); document.getElementById("pascalValue45").style.left = ((startVärde2+mellanRum*3)+'px'); document.getElementById("pascalValue45").style.top = ((nedTopp+rad5)+'px'); document.getElementById("pascalValue46").style.left = ((startVärde2+mellanRum*4)+'px'); document.getElementById("pascalValue46").style.top = ((nedTopp+rad5)+'px'); document.getElementById("pascalValue47").style.left = ((startVärde-mellanRum*4)+'px'); document.getElementById("pascalValue47").style.top = ((nedTopp+rad6)+'px'); document.getElementById("pascalValue48").style.left = ((startVärde-mellanRum*3)+'px'); document.getElementById("pascalValue48").style.top = ((nedTopp+rad6)+'px'); document.getElementById("pascalValue49").style.left = ((startVärde-mellanRum*2)+'px'); document.getElementById("pascalValue49").style.top = ((nedTopp+rad6)+'px'); document.getElementById("pascalValue50").style.left = ((startVärde-mellanRum)+'px');document.getElementById("pascalValue50").style.top = ((nedTopp+rad6)+'px'); document.getElementById("pascalValue51").style.left = ((startVärde)+'px');document.getElementById("pascalValue51").style.top = ((nedTopp+rad6)+'px'); document.getElementById("pascalValue52").style.left = ((startVärde+mellanRum)+'px'); document.getElementById("pascalValue52").style.top = ((nedTopp+rad6)+'px'); document.getElementById("pascalValue53").style.left = ((startVärde+mellanRum*2)+'px'); document.getElementById("pascalValue53").style.top = ((nedTopp+rad6)+'px'); document.getElementById("pascalValue54").style.left = ((startVärde+mellanRum*3)+'px'); document.getElementById("pascalValue54").style.top = ((nedTopp+rad6)+'px'); document.getElementById("pascalValue55").style.left = ((startVärde+mellanRum*4)+'px'); document.getElementById("pascalValue55").style.top = ((nedTopp+rad6)+'px'); document.getElementById("pascalValue56").style.left = ((startVärde2-mellanRum*4)+'px'); document.getElementById("pascalValue56").style.top = ((nedTopp+rad7)+'px'); document.getElementById("pascalValue57").style.left = ((startVärde2-mellanRum*3)+'px'); document.getElementById("pascalValue57").style.top = ((nedTopp+rad7)+'px'); document.getElementById("pascalValue58").style.left = ((startVärde2-mellanRum*2)+'px'); document.getElementById("pascalValue58").style.top = ((nedTopp+rad7)+'px'); document.getElementById("pascalValue59").style.left = ((startVärde2-mellanRum)+'px');document.getElementById("pascalValue59").style.top = ((nedTopp+rad7)+'px'); document.getElementById("pascalValue60").style.left = ((startVärde2)+'px');document.getElementById("pascalValue60").style.top = ((nedTopp+rad7)+'px'); document.getElementById("pascalValue61").style.left = ((startVärde2+mellanRum)+'px'); document.getElementById("pascalValue61").style.top = ((nedTopp+rad7)+'px'); document.getElementById("pascalValue62").style.left = ((startVärde2+mellanRum*2)+'px'); document.getElementById("pascalValue62").style.top = ((nedTopp+rad7)+'px'); document.getElementById("pascalValue63").style.left = ((startVärde2+mellanRum*3)+'px'); document.getElementById("pascalValue63").style.top = ((nedTopp+rad7)+'px'); document.getElementById("pascalValue64").style.left = ((startVärde2+mellanRum*4)+'px'); document.getElementById("pascalValue64").style.top = ((nedTopp+rad7)+'px'); document.getElementById("pascalValue65").style.left = ((startVärde2+mellanRum*5)+'px'); document.getElementById("pascalValue65").style.top = ((nedTopp+rad7)+'px'); document.getElementById("pascalValue66").style.left = ((startVärde-mellanRum*5)+'px'); document.getElementById("pascalValue66").style.top = ((nedTopp+rad8)+'px'); document.getElementById("pascalValue67").style.left = ((startVärde-mellanRum*4)+'px'); document.getElementById("pascalValue67").style.top = ((nedTopp+rad8)+'px'); document.getElementById("pascalValue68").style.left = ((startVärde-mellanRum*3)+'px'); document.getElementById("pascalValue68").style.top = ((nedTopp+rad8)+'px'); document.getElementById("pascalValue69").style.left = ((startVärde-mellanRum*2)+'px'); document.getElementById("pascalValue69").style.top = ((nedTopp+rad8)+'px'); document.getElementById("pascalValue70").style.left = ((startVärde-mellanRum)+'px');document.getElementById("pascalValue70").style.top = ((nedTopp+rad8)+'px'); document.getElementById("pascalValue71").style.left = ((startVärde)+'px');document.getElementById("pascalValue71").style.top = ((nedTopp+rad8)+'px'); document.getElementById("pascalValue72").style.left = ((startVärde+mellanRum)+'px'); document.getElementById("pascalValue72").style.top = ((nedTopp+rad8)+'px'); document.getElementById("pascalValue73").style.left = ((startVärde+mellanRum*2)+'px'); document.getElementById("pascalValue73").style.top = ((nedTopp+rad8)+'px'); document.getElementById("pascalValue74").style.left = ((startVärde+mellanRum*3)+'px'); document.getElementById("pascalValue74").style.top = ((nedTopp+rad8)+'px'); document.getElementById("pascalValue75").style.left = ((startVärde+mellanRum*4)+'px'); document.getElementById("pascalValue75").style.top = ((nedTopp+rad8)+'px'); document.getElementById("pascalValue76").style.left = ((startVärde+mellanRum*5)+'px'); document.getElementById("pascalValue76").style.top = ((nedTopp+rad8)+'px'); document.getElementById("pascalValue77").style.left = ((startVärde2-mellanRum*5)+'px'); document.getElementById("pascalValue77").style.top = ((nedTopp+rad9)+'px'); document.getElementById("pascalValue78").style.left = ((startVärde2-mellanRum*4)+'px'); document.getElementById("pascalValue78").style.top = ((nedTopp+rad9)+'px'); document.getElementById("pascalValue79").style.left = ((startVärde2-mellanRum*3)+'px'); document.getElementById("pascalValue79").style.top = ((nedTopp+rad9)+'px'); document.getElementById("pascalValue80").style.left = ((startVärde2-mellanRum*2)+'px'); document.getElementById("pascalValue80").style.top = ((nedTopp+rad9)+'px'); document.getElementById("pascalValue81").style.left = ((startVärde2-mellanRum)+'px');document.getElementById("pascalValue81").style.top = ((nedTopp+rad9)+'px'); document.getElementById("pascalValue82").style.left = ((startVärde2)+'px');document.getElementById("pascalValue82").style.top = ((nedTopp+rad9)+'px'); document.getElementById("pascalValue83").style.left = ((startVärde2+mellanRum)+'px'); document.getElementById("pascalValue83").style.top = ((nedTopp+rad9)+'px'); document.getElementById("pascalValue84").style.left = ((startVärde2+mellanRum*2)+'px'); document.getElementById("pascalValue84").style.top = ((nedTopp+rad9)+'px'); document.getElementById("pascalValue85").style.left = ((startVärde2+mellanRum*3)+'px'); document.getElementById("pascalValue85").style.top = ((nedTopp+rad9)+'px'); document.getElementById("pascalValue86").style.left = ((startVärde2+mellanRum*4)+'px'); document.getElementById("pascalValue86").style.top = ((nedTopp+rad9)+'px'); document.getElementById("pascalValue87").style.left = ((startVärde2+mellanRum*5)+'px'); document.getElementById("pascalValue87").style.top = ((nedTopp+rad9)+'px'); document.getElementById("pascalValue88").style.left = ((startVärde2+mellanRum*6)+'px'); document.getElementById("pascalValue88").style.top = ((nedTopp+rad9)+'px'); document.getElementById("pascalValue89").style.left = ((startVärde-mellanRum*6)+'px'); document.getElementById("pascalValue89").style.top = ((nedTopp+rad10)+'px'); document.getElementById("pascalValue90").style.left = ((startVärde-mellanRum*5)+'px'); document.getElementById("pascalValue90").style.top = ((nedTopp+rad10)+'px'); document.getElementById("pascalValue91").style.left = ((startVärde-mellanRum*4)+'px'); document.getElementById("pascalValue91").style.top = ((nedTopp+rad10)+'px'); document.getElementById("pascalValue92").style.left = ((startVärde-mellanRum*3)+'px'); document.getElementById("pascalValue92").style.top = ((nedTopp+rad10)+'px'); document.getElementById("pascalValue93").style.left = ((startVärde-mellanRum*2)+'px'); document.getElementById("pascalValue93").style.top = ((nedTopp+rad10)+'px'); document.getElementById("pascalValue94").style.left = ((startVärde-mellanRum)+'px');document.getElementById("pascalValue94").style.top = ((nedTopp+rad10)+'px'); document.getElementById("pascalValue95").style.left = ((startVärde)+'px');document.getElementById("pascalValue95").style.top = ((nedTopp+rad10)+'px'); document.getElementById("pascalValue96").style.left = ((startVärde+mellanRum)+'px'); document.getElementById("pascalValue96").style.top = ((nedTopp+rad10)+'px'); document.getElementById("pascalValue97").style.left = ((startVärde+mellanRum*2)+'px'); document.getElementById("pascalValue97").style.top = ((nedTopp+rad10)+'px'); document.getElementById("pascalValue98").style.left = ((startVärde+mellanRum*3)+'px'); document.getElementById("pascalValue98").style.top = ((nedTopp+rad10)+'px'); document.getElementById("pascalValue99").style.left = ((startVärde+mellanRum*4)+'px'); document.getElementById("pascalValue99").style.top = ((nedTopp+rad10)+'px'); document.getElementById("pascalValue100").style.left = ((startVärde+mellanRum*5)+'px'); document.getElementById("pascalValue100").style.top = ((nedTopp+rad10)+'px'); document.getElementById("pascalValue101").style.left = ((startVärde+mellanRum*6)+'px'); document.getElementById("pascalValue101").style.top = ((nedTopp+rad10)+'px'); document.getElementById("pascalValue102").style.left = ((startVärde2-mellanRum*6)+'px'); document.getElementById("pascalValue102").style.top = ((nedTopp+rad11)+'px'); document.getElementById("pascalValue103").style.left = ((startVärde2-mellanRum*5)+'px'); document.getElementById("pascalValue103").style.top = ((nedTopp+rad11)+'px'); document.getElementById("pascalValue104").style.left = ((startVärde2-mellanRum*4)+'px'); document.getElementById("pascalValue104").style.top = ((nedTopp+rad11)+'px'); document.getElementById("pascalValue105").style.left = ((startVärde2-mellanRum*3)+'px'); document.getElementById("pascalValue105").style.top = ((nedTopp+rad11)+'px'); document.getElementById("pascalValue106").style.left = ((startVärde2-mellanRum*2)+'px'); document.getElementById("pascalValue106").style.top = ((nedTopp+rad11)+'px'); document.getElementById("pascalValue107").style.left = ((startVärde2-mellanRum)+'px');document.getElementById("pascalValue107").style.top = ((nedTopp+rad11)+'px'); document.getElementById("pascalValue108").style.left = ((startVärde2)+'px');document.getElementById("pascalValue108").style.top = ((nedTopp+rad11)+'px'); document.getElementById("pascalValue109").style.left = ((startVärde2+mellanRum)+'px'); document.getElementById("pascalValue109").style.top = ((nedTopp+rad11)+'px'); document.getElementById("pascalValue110").style.left = ((startVärde2+mellanRum*2)+'px'); document.getElementById("pascalValue110").style.top = ((nedTopp+rad11)+'px'); document.getElementById("pascalValue111").style.left = ((startVärde2+mellanRum*3)+'px'); document.getElementById("pascalValue111").style.top = ((nedTopp+rad11)+'px'); document.getElementById("pascalValue112").style.left = ((startVärde2+mellanRum*4)+'px'); document.getElementById("pascalValue112").style.top = ((nedTopp+rad11)+'px'); document.getElementById("pascalValue113").style.left = ((startVärde2+mellanRum*5)+'px'); document.getElementById("pascalValue113").style.top = ((nedTopp+rad11)+'px'); document.getElementById("pascalValue114").style.left = ((startVärde2+mellanRum*6)+'px'); document.getElementById("pascalValue114").style.top = ((nedTopp+rad11)+'px'); document.getElementById("pascalValue115").style.left = ((startVärde2+mellanRum*7)+'px'); document.getElementById("pascalValue115").style.top = ((nedTopp+rad11)+'px'); 
+  
+    let pushData = true;
+    let testingtest = 0;
+    var i = 0;
+    var data = [];
+    let bethistory = [1];
+    let checkbet = 1;
+    let bet = 1;
+    let betRun;
+    var id1 = 0;
+    var id2 = 0;
+    var id3 = 0;
+    var id4 = 0;
+    var id5 = 0;
+    var id6 = 0;
+    var id7 = 0;
+    var id8 = 0;
+    var id9 = 0;
+    const vinstoförlust = []
+    var id10 = 0;
+    var id11 = 0;
+    var id12 = 0;
+    var id13 = 0;
+    const pengar = [10000];
+    let settingsmenu = true;
+    var multiplikator;
+    var graphValue = 150;
+    var placering = 0;
+    var output;
+    var betPer = 1;
+    var ändrabps = 0;
+    var once = false;
+    var startBelopp = pengar[0];
+    document.getElementById("pengar").innerHTML = pengar[pengar.length-1] + 'kr';
+    
+    
+
+    
+    function settingstoggle() {
+    if(document.getElementById("settings").style.display == 'none') {
+      return document.getElementById("settings").style.display = 'block'
+} else if(document.getElementById("settings").style.display = 'block') {
+      return document.getElementById("settings").style.display = 'none';
+  }}
+  function windowClose() {
+      return(document.getElementById("ändrabpspointer").style.display = 'none', 
+      ändrabps -=5);
+  }
+    this.check = function() {
+      if(simulerakronor.value*1 - pengar[pengar.length-1] >= 0.1 && simulerakronor.value*1 - pengar[pengar.length-1] <= 9.9){
+        document.getElementById("tot").innerHTML = '-' + (simulerakronor.value*1 - pengar[pengar.length-1]).toFixed(1) + 'kr';
+        document.getElementById("tot").style.color = 'red';
+      } else if(simulerakronor.value*1 - pengar[pengar.length-1] > 0) {
+        document.getElementById("tot").innerHTML = '-' + (simulerakronor.value*1 - pengar[pengar.length-1]).toFixed(0) + 'kr';
+        document.getElementById("tot").style.color = 'red';
+      } else if(simulerakronor.value*1 - pengar[pengar.length-1] <= -0.1 && simulerakronor.value*1 - pengar[pengar.length-1] >= -9.9){
+        document.getElementById("tot").innerHTML = '+' + (pengar[pengar.length-1] - simulerakronor.value*1).toFixed(1) + 'kr';
+        document.getElementById("tot").style.color = 'green';
+      }else if(simulerakronor.value*1 - pengar[pengar.length-1] < 0) {
+        document.getElementById("tot").innerHTML = '+' + (pengar[pengar.length-1] - simulerakronor.value*1).toFixed(0) + 'kr';
+        document.getElementById("tot").style.color = 'green';
+      } else {
+        document.getElementById("tot").style.color = 'white';
+      }
+    if (vinstoförlust[vinstoförlust.length - 3] == undefined) {
+      //tom
+    }
+    else if (vinstoförlust[vinstoförlust.length - 3] >= 0.1) {
+    document.getElementById("bet3").innerHTML = '+' + vinstoförlust[vinstoförlust.length - 3] + 'kr';
+    document.getElementById("bet3").style.color = 'green';
+  } else {
+    document.getElementById("bet3").innerHTML =  vinstoförlust[vinstoförlust.length - 3] + 'kr';
+    document.getElementById("bet3").style.color = 'red';
+  }
+  if (vinstoförlust[vinstoförlust.length - 2] == undefined) {
+      //tom
+    }
+  else if (vinstoförlust[vinstoförlust.length - 2] >= 0.1) {
+    document.getElementById("bet2").innerHTML = '+' + vinstoförlust[vinstoförlust.length - 2] + 'kr';
+    document.getElementById("bet2").style.color = 'green';
+  } else {
+    document.getElementById("bet2").innerHTML =  vinstoförlust[vinstoförlust.length - 2] + 'kr';
+    document.getElementById("bet2").style.color = 'red';
+  }
+  if (vinstoförlust[vinstoförlust.length - 1] == undefined) {
+      //tom
+    }
+  else if (vinstoförlust[vinstoförlust.length - 1] >= 0.1) {
+    document.getElementById("bet").innerHTML = '+' + vinstoförlust[vinstoförlust.length - 1] + 'kr';
+    document.getElementById("bet").style.color = 'green';
+  } else {
+    document.getElementById("bet").innerHTML =  vinstoförlust[vinstoförlust.length - 1] + 'kr';
+    document.getElementById("bet").style.color = 'red';
+  }
+    if(pengar[pengar.length-1] >= 100000 ) {
+    document.getElementById("playpause").style.left ="290px";
+    } else {
+      document.getElementById("playpause").style.left ="270px";
+    }
+    if (pengar[pengar.length-1] % 1 != 0) {
+    document.getElementById("pengar").innerHTML = pengar[pengar.length-1].toFixed(1) + 'kr';
+    document.getElementById("playpause").style.left ="280px";
+      if(pengar[pengar.length-1].toFixed(0) - pengar[pengar.length-1].toFixed(1) == 0) {
+        document.getElementById("pengar").innerHTML = pengar[pengar.length-1].toFixed(0) + 'kr';
+      }
+   
+   /* if (pengar[pengar.length-1].slice(-2) == 00) {
+      document.getElementById("pengar").innerHTML = pengar[pengar.length-1].toFixed(0)
+    }*/
+    } else {
+      document.getElementById("pengar").innerHTML = pengar[pengar.length-1] + 'kr';
+      document.getElementById("playpause").style.left ="270px";
+    }
+    let odds = id1 + id2 + id3 + id4 + id5 + id6 + id7 + id8 + id9 + id10 + id11 + id12 + id13;
+   
+    document.getElementById("id1").style.height = id1*100/odds + "%";
+    document.getElementById("id2").style.height = id2*100/odds + "%";
+    document.getElementById("id3").style.height = id3*100/odds + "%";
+    document.getElementById("id4").style.height = id4*100/odds + "%";
+    document.getElementById("id5").style.height = id5*100/odds + "%";
+    document.getElementById("id6").style.height = id6*100/odds + "%";
+    document.getElementById("id7").style.height = id7*100/odds + "%";
+    document.getElementById("id8").style.height = id8*100/odds + "%";
+    document.getElementById("id9").style.height = id9*100/odds + "%";
+    document.getElementById("id10").style.height = id10*100/odds + "%";
+    document.getElementById("id11").style.height = id11*100/odds + "%";
+    document.getElementById("id12").style.height = id12*100/odds + "%";
+    document.getElementById("id13").style.height = id13*100/odds + "%";
+
+    document.getElementById("id1text").style.display = 'block';
+    document.getElementById("id2text").style.display = 'block';
+    document.getElementById("id3text").style.display = 'block';
+    document.getElementById("id4text").style.display = 'block';
+    document.getElementById("id5text").style.display = 'block';
+    document.getElementById("id6text").style.display = 'block';
+    document.getElementById("id7text").style.display = 'block';
+    document.getElementById("id8text").style.display = 'block';
+    document.getElementById("id9text").style.display = 'block';
+    document.getElementById("id10text").style.display = 'block';
+    document.getElementById("id11text").style.display = 'block';
+    document.getElementById("id12text").style.display = 'block';
+    document.getElementById("id13text").style.display = 'block';
+
+    if ((id1*100/odds) % 1 != 0) {
+      document.getElementById("id1text").innerHTML = (id1*100/odds).toFixed(1) + "%";
+      } 
+      else {
+        document.getElementById("id1text").innerHTML = (id1*100/odds) + "%";
+      }
+      if ((id2*100/odds) % 1 != 0) {
+      document.getElementById("id2text").innerHTML = (id2*100/odds).toFixed(1) + "%";
+      } 
+      else {
+        document.getElementById("id2text").innerHTML = (id2*100/odds) + "%";
+      }
+      if ((id3*100/odds) % 1 != 0) {
+      document.getElementById("id3text").innerHTML = (id3*100/odds).toFixed(1) + "%";
+      } 
+      else {
+        document.getElementById("id3text").innerHTML = (id3*100/odds) + "%";
+      }
+      if ((id4*100/odds) % 1 != 0) {
+      document.getElementById("id4text").innerHTML = (id4*100/odds).toFixed(1) + "%";
+      } 
+      else {
+        document.getElementById("id4text").innerHTML = (id4*100/odds) + "%";
+      }
+      if ((id5*100/odds) % 1 != 0) {
+      document.getElementById("id5text").innerHTML = (id5*100/odds).toFixed(1) + "%";
+      } 
+      else {
+        document.getElementById("id5text").innerHTML = (id5*100/odds) + "%";
+      }
+      if ((id6*100/odds) % 1 != 0) {
+      document.getElementById("id6text").innerHTML = (id6*100/odds).toFixed(1) + "%";
+      } 
+      else {
+        document.getElementById("id6text").innerHTML = (id6*100/odds) + "%";
+      }
+      if ((id7*100/odds) % 1 != 0) {
+      document.getElementById("id7text").innerHTML = (id7*100/odds).toFixed(1) + "%";
+      } 
+      else {
+        document.getElementById("id7text").innerHTML = (id7*100/odds) + "%";
+      }
+      if ((id8*100/odds) % 1 != 0) {
+      document.getElementById("id8text").innerHTML = (id8*100/odds).toFixed(1) + "%";
+      } 
+      else {
+        document.getElementById("id8text").innerHTML = (id8*100/odds) + "%";
+      }
+      if ((id9*100/odds) % 1 != 0) {
+      document.getElementById("id9text").innerHTML = (id9*100/odds).toFixed(1) + "%";
+      } 
+      else {
+        document.getElementById("id9text").innerHTML = (id9*100/odds) + "%";
+      }
+      if ((id10*100/odds) % 1 != 0) {
+      document.getElementById("id10text").innerHTML = (id10*100/odds).toFixed(1) + "%";
+      } 
+      else {
+        document.getElementById("id10text").innerHTML = (id10*100/odds) + "%";
+      }
+      if ((id11*100/odds) % 1 != 0) {
+      document.getElementById("id11text").innerHTML = (id11*100/odds).toFixed(1) + "%";
+      } 
+      else {
+        document.getElementById("id11text").innerHTML = (id11*100/odds) + "%";
+      }
+      if ((id12*100/odds) % 1 != 0) {
+      document.getElementById("id12text").innerHTML = (id12*100/odds).toFixed(1) + "%";
+      } 
+      else {
+        document.getElementById("id12text").innerHTML = (id12*100/odds) + "%";
+      }
+      if ((id13*100/odds) % 1 != 0) {
+      document.getElementById("id13text").innerHTML = (id13*100/odds).toFixed(1) + "%";
+      } 
+      else {
+        document.getElementById("id13text").innerHTML = (id13*100/odds) + "%";
+      }
+      Graph();
+    }
+    start = false;
+    document.getElementById("betvalue").value = betPer;
+    document.getElementById("betinput").value = bet;
+    document.getElementById("drops").value = fpstounits;
+    document.getElementById("ändraPengar").value = startBelopp;
+    
+    function startvärde() {
+if(checkbet == 0 ) {
+  checkbet == 1;
+} else if(runsio == 0) {
+  //inget
+}else {
+  checkbet++
+}
+    pengar.length = 0;
+    pengar[0] = JSON.parse(ändraPengar.value);
+    bet = JSON.parse(betinput.value);
+    bethistory.push(bet);
+    betPer = JSON.parse(betvalue.value);
+
+  
+
+    if(pengar[0] >= (bet * betPer)) {
+      runs++
+    //console.log(runs)
+      session_id = Math.floor(Math.random() * 1000000000000000000); //en på en triljon att session_id blir samma två gånger i rad. 
+      //console.log("Session id is:" + session_id)
+    document.getElementById("pengar").innerHTML = pengar + 'kr';
+    document.getElementById("settings").style.display = 'none';
+    document.getElementById("betinput").style.borderLeft = "1px solid #99a3ba";
+    document.getElementById("betinput").style.borderTop = "1px solid #99a3ba";
+    document.getElementById("betinput").style.borderBottom = "1px solid #99a3ba";
+    document.getElementById("gång-gånger").style.border = "1px solid #99a3ba";
+
+    document.getElementById("ändraPengar").style.borderLeft = "1px solid #99a3ba";
+    document.getElementById("ändraPengar").style.borderTop = "1px solid #99a3ba";
+    document.getElementById("ändraPengar").style.borderBottom = "1px solid #99a3ba";
+    document.getElementById("krona-kronor-S").style.border = "1px solid #99a3ba";
+
+    document.getElementById("betvalue").style.borderLeft = "1px solid #99a3ba";
+    document.getElementById("betvalue").style.borderTop = "1px solid #99a3ba";
+    document.getElementById("betvalue").style.borderBottom = "1px solid #99a3ba";
+    document.getElementById("krona-kronor-B").style.border = "1px solid #99a3ba";
+
+    document.getElementById("saved").style.top = "85%";
+    document.getElementById("inställningsfel").innerHTML = ""
+  } else {
+    console.log("för lite pengar eftersom " + bet + "*" + betPer +  "> " + pengar[0] )
+    document.getElementById("betinput").style.borderLeft = "1px solid red";
+    document.getElementById("betinput").style.borderTop = "1px solid red";
+    document.getElementById("betinput").style.borderBottom = "1px solid red";
+    document.getElementById("gång-gånger").style.border = "1px solid red";
+
+    document.getElementById("ändraPengar").style.borderLeft = "1px solid red";
+    document.getElementById("ändraPengar").style.borderTop = "1px solid red";
+    document.getElementById("ändraPengar").style.borderBottom = "1px solid red";
+    document.getElementById("krona-kronor-S").style.border = "1px solid red";
+
+    document.getElementById("betvalue").style.borderLeft = "1px solid red";
+    document.getElementById("betvalue").style.borderTop = "1px solid red";
+    document.getElementById("betvalue").style.borderBottom = "1px solid red";
+    document.getElementById("krona-kronor-B").style.border = "1px solid red";
+
+    document.getElementById("saved").style.top = "90%";
+    document.getElementById("inställningsfel").innerHTML = "korrigera rödmarkerade fält så att pengarna räcker till hela simulationen"
+  }
+ 
+}
+function checkt() {
+  if(updsession_id != session_id && runsio != bethistory[bethistory.length-checkbet] && runs >= 2 && start==true) {
+    
+    document.getElementById("playpause").style.borderColor = "yellow";
+  
+    }
+    if (checkbet==0 && runsio == bethistory[bethistory.length-checkbet-1]) {
+      runsio = 0;
+   
+    }else if(runsio == bethistory[bethistory.length-checkbet]) {
+     
+      checkbet = 0;
+      runsio = 0;
+     
+}
+  }
+setInterval(checkt, 100);
+    function startRun() {
+      bet = JSON.parse(betinput.value);
+      betPer = JSON.parse(betvalue.value);
+      betRun = bet;
+      ändrabps += 1;
+
+      existerandepartiklar = existerandepartiklar + 1 * bet
+  
+      if(pengar[pengar.length-1] >= bet * betPer && bet >= 1 && betRun >= 1) {
+      start = true;
+      once = true; 
+    }
+
+    }
+  function run() {
+      fpstounits = JSON.parse(drops.value);
+      if (ändrabps >= 5) {
+        document.getElementById("ändrabpspointer").style.display = 'block';
+      }
+
+      if(betRun >= 1) {
+        if (start == true && frameCount % fps == 0) {
+          ändrabps -= 1;
+          betRun--;
+          pengar[pengar.length-1] -= 1 * betPer; 
+          
+ 
+      }
+      if (pengar[pengar.length-1] % 1 != 0) {
+      document.getElementById("pengar").innerHTML = pengar[pengar.length-1].toFixed(1) + 'kr';
+    
+      if(pengar[pengar.length-1].toFixed(0) - pengar[pengar.length-1].toFixed(1) == 0) {
+        document.getElementById("pengar").innerHTML = pengar[pengar.length-1].toFixed(0) + 'kr';
+      }
+      } 
+      else {
+      document.getElementById("pengar").innerHTML = pengar[pengar.length-1].toFixed(0) + 'kr';
+      }
+      }
+      if (pengar[pengar.length-1] < bet * betPer && betRun < 1) {
+        start = false;
+      }
+    once = false;
+  }
+  function done() {
+  if(betRun < 1) {
+      start = false;
+    }
+
+  }
+
+
+
+  var graph = d3.select('body').append('svg')
+    .classed("Graph", true)
+    .style('width', '450px')
+    .style('height', '301px')
+    .style('border-radius', '15px')
+    .style('position', 'absolute')
+    .style('right', '50px')
+    .style('top', '10px')
+    .style('background-color', 'rgb(51, 99, 105)');
+    
+var defs = graph.append("defs");
+
+
+    
+    var areaFunc = d3.area()
+  .curve(d3.curveLinear)
+  .x(function(d) { return d.x })
+  .y1(function(d) { return d.y }) .y0(150) 
+  
+  var lineFunc = d3.line()
+  .curve(d3.curveLinear)
+  .x(function(d) { return d.x })
+  .y(function(d) { return d.y })
+    
+  
+
+    d3.select('body').append('svg')
+    .style('width', '450px')
+    .style('height', '1px')
+    .style('border-radius', '15px')
+    .style('position', 'absolute')
+    .style('right', '50px')
+    .style('top', '159px')
+    .style('background-color', 'rgb(255,255,255)');
+   
+
+     
+
+var linearGradient = defs.append("linearGradient")
+.attr("id", "linear-gradient");
+
+let xvalue = 0;
+let yvalue= 150;
+    data.push({x:xvalue, y:yvalue}/*,{x:70, y:250},{x:170, y:220},{x:220, y:50}*/)  
+  
+    function UpdateHits() {
+      var boll14 = document.querySelector('#boll14'); boll14.dataset.content = ' ' + peg14+'/'+existerandepartiklar; var boll15 = document.querySelector('#boll15'); boll15.dataset.content = ' ' + peg15+'/'+existerandepartiklar; var boll16 = document.querySelector('#boll16'); boll16.dataset.content = ' ' + peg16+'/'+existerandepartiklar; var boll17 = document.querySelector('#boll17'); boll17.dataset.content = ' ' + peg17+'/'+existerandepartiklar; var boll18 = document.querySelector('#boll18'); boll18.dataset.content = ' ' + peg18+'/'+existerandepartiklar; var boll19 = document.querySelector('#boll19'); boll19.dataset.content = ' ' + peg19+'/'+existerandepartiklar; var boll20 = document.querySelector('#boll20'); boll20.dataset.content = ' ' + peg20+'/'+existerandepartiklar; var boll21 = document.querySelector('#boll21'); boll21.dataset.content = ' ' + peg21+'/'+existerandepartiklar; var boll22 = document.querySelector('#boll22'); boll22.dataset.content = ' ' + peg22+'/'+existerandepartiklar; var boll23 = document.querySelector('#boll23'); boll23.dataset.content = ' ' + peg23+'/'+existerandepartiklar; var boll24 = document.querySelector('#boll24'); boll24.dataset.content = ' ' + peg24+'/'+existerandepartiklar; var boll25 = document.querySelector('#boll25'); boll25.dataset.content = ' ' + peg25+'/'+existerandepartiklar; var boll26 = document.querySelector('#boll26'); boll26.dataset.content = ' ' + peg26+'/'+existerandepartiklar; var boll27 = document.querySelector('#boll27'); boll27.dataset.content = ' ' + peg27+'/'+existerandepartiklar; var boll28 = document.querySelector('#boll28'); boll28.dataset.content = ' ' + peg28+'/'+existerandepartiklar; var boll29 = document.querySelector('#boll29'); boll29.dataset.content = ' ' + peg29+'/'+existerandepartiklar; var boll30 = document.querySelector('#boll30'); boll30.dataset.content = ' ' + peg30+'/'+existerandepartiklar; var boll31 = document.querySelector('#boll31'); boll31.dataset.content = ' ' + peg31+'/'+existerandepartiklar; var boll32 = document.querySelector('#boll32'); boll32.dataset.content = ' ' + peg32+'/'+existerandepartiklar; var boll33 = document.querySelector('#boll33'); boll33.dataset.content = ' ' + peg33+'/'+existerandepartiklar; var boll34 = document.querySelector('#boll34'); boll34.dataset.content = ' ' + peg34+'/'+existerandepartiklar; var boll35 = document.querySelector('#boll35'); boll35.dataset.content = ' ' + peg35+'/'+existerandepartiklar; var boll36 = document.querySelector('#boll36'); boll36.dataset.content = ' ' + peg36+'/'+existerandepartiklar; var boll37 = document.querySelector('#boll37'); boll37.dataset.content = ' ' + peg37+'/'+existerandepartiklar; var boll38 = document.querySelector('#boll38'); boll38.dataset.content = ' ' + peg38+'/'+existerandepartiklar; var boll39 = document.querySelector('#boll39'); boll39.dataset.content = ' ' + peg39+'/'+existerandepartiklar; var boll40 = document.querySelector('#boll40'); boll40.dataset.content = ' ' + peg40+'/'+existerandepartiklar; var boll41 = document.querySelector('#boll41'); boll41.dataset.content = ' ' + peg41+'/'+existerandepartiklar; var boll42 = document.querySelector('#boll42'); boll42.dataset.content = ' ' + peg42+'/'+existerandepartiklar; var boll43 = document.querySelector('#boll43'); boll43.dataset.content = ' ' + peg43+'/'+existerandepartiklar; var boll44 = document.querySelector('#boll44'); boll44.dataset.content = ' ' + peg44+'/'+existerandepartiklar; var boll45 = document.querySelector('#boll45'); boll45.dataset.content = ' ' + peg45+'/'+existerandepartiklar; var boll46 = document.querySelector('#boll46'); boll46.dataset.content = ' ' + peg46+'/'+existerandepartiklar; var boll47 = document.querySelector('#boll47'); boll47.dataset.content = ' ' + peg47+'/'+existerandepartiklar; var boll48 = document.querySelector('#boll48'); boll48.dataset.content = ' ' + peg48+'/'+existerandepartiklar; var boll49 = document.querySelector('#boll49'); boll49.dataset.content = ' ' + peg49+'/'+existerandepartiklar; var boll50 = document.querySelector('#boll50'); boll50.dataset.content = ' ' + peg50+'/'+existerandepartiklar; var boll51 = document.querySelector('#boll51'); boll51.dataset.content = ' ' + peg51+'/'+existerandepartiklar; var boll52 = document.querySelector('#boll52'); boll52.dataset.content = ' ' + peg52+'/'+existerandepartiklar; var boll53 = document.querySelector('#boll53'); boll53.dataset.content = ' ' + peg53+'/'+existerandepartiklar; var boll54 = document.querySelector('#boll54'); boll54.dataset.content = ' ' + peg54+'/'+existerandepartiklar; var boll55 = document.querySelector('#boll55'); boll55.dataset.content = ' ' + peg55+'/'+existerandepartiklar; var boll56 = document.querySelector('#boll56'); boll56.dataset.content = ' ' + peg56+'/'+existerandepartiklar; var boll57 = document.querySelector('#boll57'); boll57.dataset.content = ' ' + peg57+'/'+existerandepartiklar; var boll58 = document.querySelector('#boll58'); boll58.dataset.content = ' ' + peg58+'/'+existerandepartiklar; var boll59 = document.querySelector('#boll59'); boll59.dataset.content = ' ' + peg59+'/'+existerandepartiklar; var boll60 = document.querySelector('#boll60'); boll60.dataset.content = ' ' + peg50+'/'+existerandepartiklar; var boll61 = document.querySelector('#boll61'); boll61.dataset.content = ' ' + peg61+'/'+existerandepartiklar; var boll62 = document.querySelector('#boll62'); boll62.dataset.content = ' ' + peg62+'/'+existerandepartiklar; var boll63 = document.querySelector('#boll63'); boll63.dataset.content = ' ' + peg63+'/'+existerandepartiklar; var boll64 = document.querySelector('#boll64'); boll64.dataset.content = ' ' + peg64+'/'+existerandepartiklar; var boll65 = document.querySelector('#boll65'); boll65.dataset.content = ' ' + peg65+'/'+existerandepartiklar; var boll66 = document.querySelector('#boll66'); boll66.dataset.content = ' ' + peg66+'/'+existerandepartiklar; var boll67 = document.querySelector('#boll67'); boll67.dataset.content = ' ' + peg67+'/'+existerandepartiklar; var boll68 = document.querySelector('#boll68'); boll68.dataset.content = ' ' + peg68+'/'+existerandepartiklar; var boll70 = document.querySelector('#boll70'); boll70.dataset.content = ' ' + peg70+'/'+existerandepartiklar; var boll71 = document.querySelector('#boll71'); boll71.dataset.content = ' ' + peg71+'/'+existerandepartiklar; var boll72 = document.querySelector('#boll72'); boll72.dataset.content = ' ' + peg72+'/'+existerandepartiklar; var boll73 = document.querySelector('#boll73'); boll73.dataset.content = ' ' + peg73+'/'+existerandepartiklar; var boll74 = document.querySelector('#boll74'); boll74.dataset.content = ' ' + peg74+'/'+existerandepartiklar; var boll75 = document.querySelector('#boll75'); boll75.dataset.content = ' ' + peg75+'/'+existerandepartiklar; var boll76 = document.querySelector('#boll76'); boll76.dataset.content = ' ' + peg76+'/'+existerandepartiklar; var boll77 = document.querySelector('#boll77'); boll77.dataset.content = ' ' + peg77+'/'+existerandepartiklar; var boll78 = document.querySelector('#boll78'); boll78.dataset.content = ' ' + peg78+'/'+existerandepartiklar; var boll79 = document.querySelector('#boll79'); boll79.dataset.content = ' ' + peg79+'/'+existerandepartiklar; var boll80 = document.querySelector('#boll80'); boll80.dataset.content = ' ' + peg80+'/'+existerandepartiklar; var boll81 = document.querySelector('#boll81'); boll81.dataset.content = ' ' + peg81+'/'+existerandepartiklar; var boll82 = document.querySelector('#boll82'); boll82.dataset.content = ' ' + peg82+'/'+existerandepartiklar; var boll83 = document.querySelector('#boll83'); boll83.dataset.content = ' ' + peg83+'/'+existerandepartiklar; var boll84 = document.querySelector('#boll84'); boll84.dataset.content = ' ' + peg84+'/'+existerandepartiklar; var boll85 = document.querySelector('#boll85'); boll85.dataset.content = ' ' + peg85+'/'+existerandepartiklar; var boll86 = document.querySelector('#boll86'); boll86.dataset.content = ' ' + peg86+'/'+existerandepartiklar; var boll87 = document.querySelector('#boll87'); boll87.dataset.content = ' ' + peg87+'/'+existerandepartiklar; var boll88 = document.querySelector('#boll88'); boll88.dataset.content = ' ' + peg88+'/'+existerandepartiklar; var boll89 = document.querySelector('#boll89'); boll89.dataset.content = ' ' + peg89+'/'+existerandepartiklar; var boll90 = document.querySelector('#boll90'); boll90.dataset.content = ' ' + peg90+'/'+existerandepartiklar; var boll91 = document.querySelector('#boll91'); boll91.dataset.content = ' ' + peg91+'/'+existerandepartiklar; var boll92 = document.querySelector('#boll92'); boll92.dataset.content = ' ' + peg92+'/'+existerandepartiklar; var boll93 = document.querySelector('#boll93'); boll93.dataset.content = ' ' + peg93+'/'+existerandepartiklar; var boll94 = document.querySelector('#boll94'); boll94.dataset.content = ' ' + peg94+'/'+existerandepartiklar; var boll95 = document.querySelector('#boll95'); boll95.dataset.content = ' ' + peg95+'/'+existerandepartiklar; var boll96 = document.querySelector('#boll96'); boll96.dataset.content = ' ' + peg96+'/'+existerandepartiklar; var boll97 = document.querySelector('#boll97'); boll97.dataset.content = ' ' + peg97+'/'+existerandepartiklar; var boll98 = document.querySelector('#boll98'); boll98.dataset.content = ' ' + peg98+'/'+existerandepartiklar; var boll99 = document.querySelector('#boll99'); boll99.dataset.content = ' ' + peg99+'/'+existerandepartiklar; var boll100 = document.querySelector('#boll100'); boll100.dataset.content = ' ' + peg100+'/'+existerandepartiklar; var boll101 = document.querySelector('#boll101'); boll101.dataset.content = ' ' + peg101+'/'+existerandepartiklar; var boll102 = document.querySelector('#boll102'); boll102.dataset.content = ' ' + peg102+'/'+existerandepartiklar; var boll103 = document.querySelector('#boll103'); boll103.dataset.content = ' ' + peg103+'/'+existerandepartiklar; var boll104 = document.querySelector('#boll104'); boll104.dataset.content = ' ' + peg104+'/'+existerandepartiklar; var boll105 = document.querySelector('#boll105'); boll105.dataset.content = ' ' + peg105+'/'+existerandepartiklar; var boll106 = document.querySelector('#boll106'); boll106.dataset.content = ' ' + peg106+'/'+existerandepartiklar; var boll107 = document.querySelector('#boll107'); boll107.dataset.content = ' ' + peg107+'/'+existerandepartiklar; var boll108 = document.querySelector('#boll108'); boll108.dataset.content = ' ' + peg108+'/'+existerandepartiklar; var boll109 = document.querySelector('#boll109'); boll109.dataset.content = ' ' + peg109+'/'+existerandepartiklar; var boll110 = document.querySelector('#boll110'); boll110.dataset.content = ' ' + peg110+'/'+existerandepartiklar; var boll111 = document.querySelector('#boll111'); boll111.dataset.content = ' ' + peg111+'/'+existerandepartiklar; var boll112 = document.querySelector('#boll112'); boll112.dataset.content = ' ' + peg112+'/'+existerandepartiklar; var boll113 = document.querySelector('#boll113'); boll113.dataset.content = ' ' + peg113+'/'+existerandepartiklar; var boll114 = document.querySelector('#boll114'); boll114.dataset.content = ' ' + peg114+'/'+existerandepartiklar; var boll115 = document.querySelector('#boll115'); boll115.dataset.content = ' ' + peg115+'/'+existerandepartiklar; 
+    }
+    function Graph() {
+    i++
+  //  var boll14 = document.querySelector('#boll14'); boll14.dataset.content = ' ' + peg14+'/'+existerandepartiklar; var boll15 = document.querySelector('#boll15'); boll15.dataset.content = ' ' + peg15+'/'+existerandepartiklar; var boll16 = document.querySelector('#boll16'); boll16.dataset.content = ' ' + peg16+'/'+existerandepartiklar; var boll17 = document.querySelector('#boll17'); boll17.dataset.content = ' ' + peg17+'/'+existerandepartiklar; var boll18 = document.querySelector('#boll18'); boll18.dataset.content = ' ' + peg18+'/'+existerandepartiklar; var boll19 = document.querySelector('#boll19'); boll19.dataset.content = ' ' + peg19+'/'+existerandepartiklar; var boll20 = document.querySelector('#boll20'); boll20.dataset.content = ' ' + peg20+'/'+existerandepartiklar; var boll21 = document.querySelector('#boll21'); boll21.dataset.content = ' ' + peg21+'/'+existerandepartiklar; var boll22 = document.querySelector('#boll22'); boll22.dataset.content = ' ' + peg22+'/'+existerandepartiklar; var boll23 = document.querySelector('#boll23'); boll23.dataset.content = ' ' + peg23+'/'+existerandepartiklar; var boll24 = document.querySelector('#boll24'); boll24.dataset.content = ' ' + peg24+'/'+existerandepartiklar; var boll25 = document.querySelector('#boll25'); boll25.dataset.content = ' ' + peg25+'/'+existerandepartiklar; var boll26 = document.querySelector('#boll26'); boll26.dataset.content = ' ' + peg26+'/'+existerandepartiklar; var boll27 = document.querySelector('#boll27'); boll27.dataset.content = ' ' + peg27+'/'+existerandepartiklar; var boll28 = document.querySelector('#boll28'); boll28.dataset.content = ' ' + peg28+'/'+existerandepartiklar; var boll29 = document.querySelector('#boll29'); boll29.dataset.content = ' ' + peg29+'/'+existerandepartiklar; var boll30 = document.querySelector('#boll30'); boll30.dataset.content = ' ' + peg30+'/'+existerandepartiklar; var boll31 = document.querySelector('#boll31'); boll31.dataset.content = ' ' + peg31+'/'+existerandepartiklar; var boll32 = document.querySelector('#boll32'); boll32.dataset.content = ' ' + peg32+'/'+existerandepartiklar; var boll33 = document.querySelector('#boll33'); boll33.dataset.content = ' ' + peg33+'/'+existerandepartiklar; var boll34 = document.querySelector('#boll34'); boll34.dataset.content = ' ' + peg34+'/'+existerandepartiklar; var boll35 = document.querySelector('#boll35'); boll35.dataset.content = ' ' + peg35+'/'+existerandepartiklar; var boll36 = document.querySelector('#boll36'); boll36.dataset.content = ' ' + peg36+'/'+existerandepartiklar; var boll37 = document.querySelector('#boll37'); boll37.dataset.content = ' ' + peg37+'/'+existerandepartiklar; var boll38 = document.querySelector('#boll38'); boll38.dataset.content = ' ' + peg38+'/'+existerandepartiklar; var boll39 = document.querySelector('#boll39'); boll39.dataset.content = ' ' + peg39+'/'+existerandepartiklar; var boll40 = document.querySelector('#boll40'); boll40.dataset.content = ' ' + peg40+'/'+existerandepartiklar; var boll41 = document.querySelector('#boll41'); boll41.dataset.content = ' ' + peg41+'/'+existerandepartiklar; var boll42 = document.querySelector('#boll42'); boll42.dataset.content = ' ' + peg42+'/'+existerandepartiklar; var boll43 = document.querySelector('#boll43'); boll43.dataset.content = ' ' + peg43+'/'+existerandepartiklar; var boll44 = document.querySelector('#boll44'); boll44.dataset.content = ' ' + peg44+'/'+existerandepartiklar; var boll45 = document.querySelector('#boll45'); boll45.dataset.content = ' ' + peg45+'/'+existerandepartiklar; var boll46 = document.querySelector('#boll46'); boll46.dataset.content = ' ' + peg46+'/'+existerandepartiklar; var boll47 = document.querySelector('#boll47'); boll47.dataset.content = ' ' + peg47+'/'+existerandepartiklar; var boll48 = document.querySelector('#boll48'); boll48.dataset.content = ' ' + peg48+'/'+existerandepartiklar; var boll49 = document.querySelector('#boll49'); boll49.dataset.content = ' ' + peg49+'/'+existerandepartiklar; var boll50 = document.querySelector('#boll50'); boll50.dataset.content = ' ' + peg50+'/'+existerandepartiklar; var boll51 = document.querySelector('#boll51'); boll51.dataset.content = ' ' + peg51+'/'+existerandepartiklar; var boll52 = document.querySelector('#boll52'); boll52.dataset.content = ' ' + peg52+'/'+existerandepartiklar; var boll53 = document.querySelector('#boll53'); boll53.dataset.content = ' ' + peg53+'/'+existerandepartiklar; var boll54 = document.querySelector('#boll54'); boll54.dataset.content = ' ' + peg54+'/'+existerandepartiklar; var boll55 = document.querySelector('#boll55'); boll55.dataset.content = ' ' + peg55+'/'+existerandepartiklar; var boll56 = document.querySelector('#boll56'); boll56.dataset.content = ' ' + peg56+'/'+existerandepartiklar; var boll57 = document.querySelector('#boll57'); boll57.dataset.content = ' ' + peg57+'/'+existerandepartiklar; var boll58 = document.querySelector('#boll58'); boll58.dataset.content = ' ' + peg58+'/'+existerandepartiklar; var boll59 = document.querySelector('#boll59'); boll59.dataset.content = ' ' + peg59+'/'+existerandepartiklar; var boll60 = document.querySelector('#boll60'); boll60.dataset.content = ' ' + peg50+'/'+existerandepartiklar; var boll61 = document.querySelector('#boll61'); boll61.dataset.content = ' ' + peg61+'/'+existerandepartiklar; var boll62 = document.querySelector('#boll62'); boll62.dataset.content = ' ' + peg62+'/'+existerandepartiklar; var boll63 = document.querySelector('#boll63'); boll63.dataset.content = ' ' + peg63+'/'+existerandepartiklar; var boll64 = document.querySelector('#boll64'); boll64.dataset.content = ' ' + peg64+'/'+existerandepartiklar; var boll65 = document.querySelector('#boll65'); boll65.dataset.content = ' ' + peg65+'/'+existerandepartiklar; var boll66 = document.querySelector('#boll66'); boll66.dataset.content = ' ' + peg66+'/'+existerandepartiklar; var boll67 = document.querySelector('#boll67'); boll67.dataset.content = ' ' + peg67+'/'+existerandepartiklar; var boll68 = document.querySelector('#boll68'); boll68.dataset.content = ' ' + peg68+'/'+existerandepartiklar; var boll70 = document.querySelector('#boll70'); boll70.dataset.content = ' ' + peg70+'/'+existerandepartiklar; var boll71 = document.querySelector('#boll71'); boll71.dataset.content = ' ' + peg71+'/'+existerandepartiklar; var boll72 = document.querySelector('#boll72'); boll72.dataset.content = ' ' + peg72+'/'+existerandepartiklar; var boll73 = document.querySelector('#boll73'); boll73.dataset.content = ' ' + peg73+'/'+existerandepartiklar; var boll74 = document.querySelector('#boll74'); boll74.dataset.content = ' ' + peg74+'/'+existerandepartiklar; var boll75 = document.querySelector('#boll75'); boll75.dataset.content = ' ' + peg75+'/'+existerandepartiklar; var boll76 = document.querySelector('#boll76'); boll76.dataset.content = ' ' + peg76+'/'+existerandepartiklar; var boll77 = document.querySelector('#boll77'); boll77.dataset.content = ' ' + peg77+'/'+existerandepartiklar; var boll78 = document.querySelector('#boll78'); boll78.dataset.content = ' ' + peg78+'/'+existerandepartiklar; var boll79 = document.querySelector('#boll79'); boll79.dataset.content = ' ' + peg79+'/'+existerandepartiklar; var boll80 = document.querySelector('#boll80'); boll80.dataset.content = ' ' + peg80+'/'+existerandepartiklar; var boll81 = document.querySelector('#boll81'); boll81.dataset.content = ' ' + peg81+'/'+existerandepartiklar; var boll82 = document.querySelector('#boll82'); boll82.dataset.content = ' ' + peg82+'/'+existerandepartiklar; var boll83 = document.querySelector('#boll83'); boll83.dataset.content = ' ' + peg83+'/'+existerandepartiklar; var boll84 = document.querySelector('#boll84'); boll84.dataset.content = ' ' + peg84+'/'+existerandepartiklar; var boll85 = document.querySelector('#boll85'); boll85.dataset.content = ' ' + peg85+'/'+existerandepartiklar; var boll86 = document.querySelector('#boll86'); boll86.dataset.content = ' ' + peg86+'/'+existerandepartiklar; var boll87 = document.querySelector('#boll87'); boll87.dataset.content = ' ' + peg87+'/'+existerandepartiklar; var boll88 = document.querySelector('#boll88'); boll88.dataset.content = ' ' + peg88+'/'+existerandepartiklar; var boll89 = document.querySelector('#boll89'); boll89.dataset.content = ' ' + peg89+'/'+existerandepartiklar; var boll90 = document.querySelector('#boll90'); boll90.dataset.content = ' ' + peg90+'/'+existerandepartiklar; var boll91 = document.querySelector('#boll91'); boll91.dataset.content = ' ' + peg91+'/'+existerandepartiklar; var boll92 = document.querySelector('#boll92'); boll92.dataset.content = ' ' + peg92+'/'+existerandepartiklar; var boll93 = document.querySelector('#boll93'); boll93.dataset.content = ' ' + peg93+'/'+existerandepartiklar; var boll94 = document.querySelector('#boll94'); boll94.dataset.content = ' ' + peg94+'/'+existerandepartiklar; var boll95 = document.querySelector('#boll95'); boll95.dataset.content = ' ' + peg95+'/'+existerandepartiklar; var boll96 = document.querySelector('#boll96'); boll96.dataset.content = ' ' + peg96+'/'+existerandepartiklar; var boll97 = document.querySelector('#boll97'); boll97.dataset.content = ' ' + peg97+'/'+existerandepartiklar; var boll98 = document.querySelector('#boll98'); boll98.dataset.content = ' ' + peg98+'/'+existerandepartiklar; var boll99 = document.querySelector('#boll99'); boll99.dataset.content = ' ' + peg99+'/'+existerandepartiklar; var boll100 = document.querySelector('#boll100'); boll100.dataset.content = ' ' + peg100+'/'+existerandepartiklar; var boll101 = document.querySelector('#boll101'); boll101.dataset.content = ' ' + peg101+'/'+existerandepartiklar; var boll102 = document.querySelector('#boll102'); boll102.dataset.content = ' ' + peg102+'/'+existerandepartiklar; var boll103 = document.querySelector('#boll103'); boll103.dataset.content = ' ' + peg103+'/'+existerandepartiklar; var boll104 = document.querySelector('#boll104'); boll104.dataset.content = ' ' + peg104+'/'+existerandepartiklar; var boll105 = document.querySelector('#boll105'); boll105.dataset.content = ' ' + peg105+'/'+existerandepartiklar; var boll106 = document.querySelector('#boll106'); boll106.dataset.content = ' ' + peg106+'/'+existerandepartiklar; var boll107 = document.querySelector('#boll107'); boll107.dataset.content = ' ' + peg107+'/'+existerandepartiklar; var boll108 = document.querySelector('#boll108'); boll108.dataset.content = ' ' + peg108+'/'+existerandepartiklar; var boll109 = document.querySelector('#boll109'); boll109.dataset.content = ' ' + peg109+'/'+existerandepartiklar; var boll110 = document.querySelector('#boll110'); boll110.dataset.content = ' ' + peg110+'/'+existerandepartiklar; var boll111 = document.querySelector('#boll111'); boll111.dataset.content = ' ' + peg111+'/'+existerandepartiklar; var boll112 = document.querySelector('#boll112'); boll112.dataset.content = ' ' + peg112+'/'+existerandepartiklar; var boll113 = document.querySelector('#boll113'); boll113.dataset.content = ' ' + peg113+'/'+existerandepartiklar; var boll114 = document.querySelector('#boll114'); boll114.dataset.content = ' ' + peg114+'/'+existerandepartiklar; var boll115 = document.querySelector('#boll115'); boll115.dataset.content = ' ' + peg115+'/'+existerandepartiklar; 
+  
+  let returns = (id1*33 + id2*11 + id3*4 + id4*2 + id5*1.1 + id6*0.6 + id7*0.3 + id8*0.6 + id9*1.1 + id10*2 + id11*4 + id12*11 + id13*33)/(id1 + id2 + id3 + id4 + id5 + id6 + id7 + id8 + id9 + id10 + id11 + id12 + id13)
+  let returnlow = 0.6*0.3*0.6*bet*betPer;
+  let returnhigh = 1.1*bet*betPer;
+
+  //yvalue = Math.floor(Math.random() * -30) + data[data.length-1].y;
+  if (bet <= 99) {
+    //ett sätt att hantera grafens x värde =>
+    // data.flatMap(n => n.x > 0 ? [n.x -= ((450/data.length))] : []);
+    // data.flatMap(n => n.x < 0 ? [n.x -= (n.x)] : []);
+    //   xvalue = (data[data.length-1].x)+(450/data.length)
+
+
+    //ett annat =>
+    xvalue = 45 + data[data.length-1].x;
+
+    //   if((vinstoförlust[vinstoförlust.length-1]*1) < 0) {
+    //     console.log("yvalue => " + yvalue + "andra => " + 150/(returns*10));
+    //   yvalue = yvalue-(returns*50*(vinstoförlust[vinstoförlust.length-1]*1))
+
+    // } else if((vinstoförlust[vinstoförlust.length-1]*1) > 0) {
+    //   yvalue = yvalue-(returns*50*(vinstoförlust[vinstoförlust.length-1]*1))
+    //   console.log("yyy2")
+    // }
+
+  // console.log(150-(yvalue/(-(returns)*20)))¨¨
+ if(returns < 1) {
+    yvalue = 150 + yvalue/(returns*4) 
+  } else if (returns > 1 ) {
+    yvalue = 150 - yvalue/(returns*4)
+  }
+  }else {
+      xvalue = 45 + data[data.length-1].x;
+    }
+
+
+  if(bet >=100) {
+yvalue = 150;
+ if(returns < 1) { 
+
+  yvalue = 150 + yvalue/(returns*4)
+  if(returnlow/(simulerakronor.value*1 -pengar[pengar.length-1]) > 1) {
+   yvalue = yvalue/returns
+   } else {
+   yvalue = yvalue/(returns*(returnlow/(simulerakronor.value*1 -pengar[pengar.length-1])))
+}} else  if (returns > 1) {
+  // yvalue -= returns
+  yvalue = 150 - yvalue/(returns*4)
+  }
+  }
+  data.push({x:xvalue,y:yvalue})
+  if(data.length >= 100) {
+  data.shift()
+  data[0].x = 1;
+  data[0].y = 150;
+
+}
+//x värde mer än 450
+if(data[data.length-1].x > 450) {
+  if(bet <=10) {
+    data.flatMap(n => n.x > 0 ? [n.x-=((n.x)/11)] : []);
+  }else {
+  data.flatMap(n => n.x > 0 ? [n.x-=((n.x)/22)] : []);
+}}
+
+
+for (let i = 1; i <= data.length-1; i++) {
+ if(data[i].y > 300) {
+      if(bet >= 12) {
+        data.flatMap(n => n.y > 150 ? [n.y-=(((n.y))-150)/(200)] : []);
+      } else {
+        data.flatMap(n => n.y > 150 ? [n.y-=(((n.y))-150)/(10)] : []);
+//data.flatMap(n => n.y > 150 ? [n.y=((n.y)/(150/(((drops.value/(bet/2)))-(((150-(n.y))/200)))))] : []);
+    }
+  }
+     //vunnit mer än grafens storlek
+    if(data[i].y < 0) {
+      if(bet >= 12) {
+        data.flatMap(n => n.y < 150 ? [n.y+=((150-(n.y))/200)] : []);
+      }else {
+data.flatMap(n => n.y < 150 ? [n.y+=((150-(n.y))/(drops.value/(bet/2)))] : []);
+}
+    }
+
+
+}
+  graph.selectAll('path').remove()
+  graph.append('path')
+  .attr('d', areaFunc(data))
+  .classed("area", true)
+  .attr('stroke', 'none')
+  .style("fill-opacity", .2)
+  .attr('fill', "url(#linear-gradient)")
+
+  graph.append('path')
+  .attr('d', lineFunc(data))
+  .classed("line", true)
+  .attr('stroke-width', '0.5')
+  .attr('stroke', "url(#linear-gradient)")
+  .attr('fill', 'none')
+  .style('z-index', '1000');
+
+  linearGradient.append("stop")
+  .attr("offset","100%")
+  .attr("stop-color", "#00FF00"); //green
+
+  linearGradient.append("stop")
+  .attr("offset", "0%")
+  .attr("stop-color", "#FF0000"); //red
+        let gradingMINUS = (Math.max.apply(null,
+        data.map(function(o) { return o.y; }))-150)
+       
+        let gradingPLUS = (150-Math.min.apply(null,
+        data.map(function(o) { return o.y; })))
+
+        let canvassize = (gradingMINUS+gradingPLUS)
+
+        if(gradingPLUS *1 == 0) {
+          linearGradient
+        .attr("x1", "0%")
+        .attr("y1", "0%")
+        .attr("x2", "0%")
+        .attr("y2", (0));
+      }else if(gradingMINUS > gradingPLUS) {
+        
+          
+          linearGradient
+        .attr("x1", "0%")
+        .attr("y1", "0%")
+        .attr("x2", "0%")
+        .attr("y2", (1-(gradingMINUS/canvassize)));
+
+        }else if (gradingPLUS > gradingMINUS) {
+   
+          
+          linearGradient
+        .attr("x1", "0%")
+        .attr("y1", "0%")
+        .attr("x2", "0%")
+        .attr("y2", (gradingPLUS/canvassize));
+
+        }else {
+   
+         linearGradient
+        .attr("x1", "0%")
+        .attr("y1", "0%")
+        .attr("x2", "0%")
+        .attr("y2", 0.5);
+        }
+      }
+
+//var refreshIntervalId =setInterval(Graph,50)
+
+
+  function playpause() {
+    //console.log("playplay")
+    if(checkbet == 0 ) {
+  checkbet = 1;
+  
+}
+    if(!play) {
+      document.getElementById("playpause").style.width = "20px";
+    document.getElementById("playpause").style.height = "12px";
+    document.getElementById("playpause").style.borderStyle = "double";
+    document.getElementById("playpause").style.borderColor = "rgb(163, 5, 5)";
+    document.getElementById("playpause").style.borderWidth = "0px 0px 0px 7px";
+    play = true
+    startRun()
+    } else {
+      document.getElementById("playpause").style.width = "0px";
+    document.getElementById("playpause").style.height = "0px";
+    document.getElementById("playpause").style.borderTop = "7.5px solid transparent";
+    document.getElementById("playpause").style.borderBottom = "7.5px solid transparent";
+    document.getElementById("playpause").style.borderLeft = "10px solid green";
+    document.getElementById("playpause").style.borderRadius = "0.5px";
+    document.getElementById("playpause").style.top = "50%";
+    document.getElementById("playpause").style.transform = "translate(0,-50%)";
+    play = false
+    start = false;
+
+  }
+  }
+  </script>
+</body>

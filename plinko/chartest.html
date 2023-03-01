@@ -1,0 +1,63 @@
+<head>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" ></script>
+</head>
+<body> 
+    <button onclick={pushdata()}>push data</button>
+<div>
+    <canvas id="myChart"></canvas>
+</div>
+</body>
+  <script>
+var randomnumber;
+var i=0;
+var value=0;
+labels = [];
+dataValue = []
+const data = {
+     labels: labels,
+     datasets: [{
+        fill: origin,
+        fillColor: 'rgba(11,11,111)',
+     backgroundColor: 'rgb(0,99,132)',
+     borderColor: 'rgb(0,99,132)',
+     data:dataValue,
+    }]}
+    const config = {
+        type: "line",
+        data,
+        options: {
+            radius:0,
+            interaction: {
+      intersect: false
+    },
+            elements: {
+                line: {
+                    tension: dataValue*0.01
+                }
+            },
+        plugins: {
+            legend: false,
+        }
+    }
+
+     
+};
+    var Chart1 = new Chart(document.getElementById('myChart'),config);
+    labels.push(i)
+    dataValue.push(value)
+   
+    function pushdata() {
+    
+    increaseordecrease=(Math.random() >= 0.5 ? -1 : 1)
+    value += increaseordecrease
+    console.log(increaseordecrease)
+    dataValue.push(value)
+    
+    labels.push(i)
+    i++;   
+
+    Chart1.update();
+}
+  </script>
+   
